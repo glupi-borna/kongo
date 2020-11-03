@@ -1,0 +1,303 @@
+@font-face {
+  font-family: ALSSchlange;
+  src: url("fonts/alsschlangeregular.otf");
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("fonts/DINPro-Bold.otf");
+  font-size: bold;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("fonts/DINPro-Cond.otf");
+  font-stretch: condensed;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("fonts/DINPro-CondBold.otf");
+  font-stretch: condensed;
+  font-size: bold;
+}
+@font-face {
+  font-family: "DIN Pro";
+  src: url("fonts/DINPro-CondMedium.otf");
+  font-stretch: condensed;
+  font-weight: medium;
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+html, body {
+  background-color: white;
+  background: url("graphics/PODLOGA.svg");
+  background-size: 5%;
+  color: #3c3835;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+body::after {
+  /* Fadein */
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  background: white;
+  z-index: 1;
+  pointer-events: none;
+  animation: 0.5s fadeout forwards;
+}
+
+header {
+  flex: 0 0 auto;
+  position: relative;
+  background: #3c3835;
+  height: 13vh;
+  width: 100%;
+}
+header img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  height: 125%;
+}
+
+footer {
+  flex: 0 0 auto;
+  position: absolute;
+  background: white;
+  bottom: 0;
+  height: 4vh;
+  width: 13vh;
+  padding: 1vh;
+}
+footer img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  height: calc(100% - 2vh);
+  width: calc(100% - 2vh);
+}
+
+main {
+  position: relative;
+  flex: 1;
+  width: 100vw;
+  overflow: hidden;
+}
+main article.food-element {
+  position: relative;
+  height: 22vh;
+  margin-top: 4.5vh;
+  margin-left: 5vw;
+  margin-right: 5vw;
+  box-sizing: border-box;
+  transition: margin-right 0.25s, opacity 0.25s, filter 0.25s, height 0.2s;
+  z-index: 1;
+  /* filter: blur(calc((1 - var(--middle-distance)) * 10px - 9px)); */
+  /* opacity: calc(0.8 + var(--middle-distance)); */
+}
+main article.food-element.unfocused {
+  opacity: 0.5;
+  filter: blur(3px);
+}
+main article.food-element.large {
+  height: 75vh;
+}
+main article.food-element.large .food-details {
+  width: calc(100% - 2vw);
+  left: 2vw;
+  right: 0;
+}
+main article.food-element.large .food-details .food-blank {
+  flex-basis: calc(22vh - 2vw);
+}
+main article.food-element .food-image {
+  position: absolute;
+  height: 22vh;
+  left: 11vh;
+  z-index: 2;
+  transform: translateX(-50%);
+  filter: brightness(120%);
+}
+main article.food-element .food-image img {
+  height: 100%;
+  border-radius: 100%;
+  position: relative;
+  max-height: 22vh;
+  z-index: 2;
+}
+main article.food-element .food-image::before {
+  /* Shadow */
+  content: "";
+  display: block;
+  position: absolute;
+  /* background: linear-gradient(to top, transparent, $primary); */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 50%;
+  z-index: 1;
+  transform-origin: bottom;
+  transform: rotate(45deg);
+  box-shadow: 0 5.5vh rgba(60, 56, 53, 0.95), 0 11vh rgba(60, 56, 53, 0.9), 0 16.5vh rgba(60, 56, 53, 0.85), 0 22vh rgba(60, 56, 53, 0.8), 0 27.5vh rgba(60, 56, 53, 0.75), 0 33vh rgba(60, 56, 53, 0.7), 0 38.5vh rgba(60, 56, 53, 0.65), 0 44vh rgba(60, 56, 53, 0.6), 0 49.5vh rgba(60, 56, 53, 0.55), 0 55vh rgba(60, 56, 53, 0.5), 0 60.5vh rgba(60, 56, 53, 0.45), 0 66vh rgba(60, 56, 53, 0.4), 0 71.5vh rgba(60, 56, 53, 0.35), 0 77vh rgba(60, 56, 53, 0.3), 0 82.5vh rgba(60, 56, 53, 0.25);
+  opacity: 0.1;
+}
+main article.food-element .food-details {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  position: absolute;
+  left: 11vh;
+  width: calc(100% - 11vh);
+  height: 100%;
+  top: 0;
+  background: white;
+  padding: 1vh;
+  box-sizing: border-box;
+  transition: width 0.2s, left 0.2s;
+}
+main article.food-element .food-details .food-summary {
+  flex: 2;
+  position: relative;
+  border-top: 0.3vh solid #3c3835;
+  box-sizing: border-box;
+  height: 22vh;
+}
+main article.food-element .food-details .food-blank {
+  transition: flex-basis 0.2s;
+  flex: 0 0 11vh;
+}
+main article.food-element:nth-child(2n+1) .food-details {
+  left: 0;
+  flex-flow: row nowrap;
+}
+main article.food-element:nth-child(2n+1) .food-image {
+  right: 11vh;
+  left: initial;
+  transform: translateX(50%);
+}
+main article.food-element:nth-child(2n+1) .food-image::before {
+  transform: rotate(-45deg);
+  /* transform: rotate(-45deg) scale(1, 4) translateY(50%); */
+}
+main article.food-element:nth-child(2n+1).large .food-details {
+  left: 0;
+}
+main article.food-element h1.food-title {
+  font: 1.25vh "DIN Pro";
+  font-weight: bold;
+  text-transform: uppercase;
+}
+main article.food-element p.food-description {
+  font: 0.72vh ALSSchlange;
+}
+main article.food-element p.food-discount {
+  font: 1.3vh "DIN Pro";
+  font-weight: medium;
+  font-stretch: condensed;
+  margin: 0;
+  position: absolute;
+  bottom: 7.5vh;
+  padding-left: 0.5vh;
+}
+main article.food-element p.food-discount .food-original-price {
+  text-decoration: line-through 0.2vh;
+}
+main article.food-element p.food-price {
+  font: 5vh "DIN Pro";
+  font-weight: bold;
+  margin: 0;
+  position: absolute;
+  bottom: 2vh;
+}
+main article.food-element p.food-price::after {
+  content: "kn";
+  font-size: 50.4%;
+}
+main article.food-element:first-child {
+  margin-top: 4vh;
+}
+main article.food-element:last-child {
+  margin-bottom: 8vh;
+}
+main.has-scrollbar article.food-element {
+  margin-right: 10vw;
+}
+
+div.scroll-container {
+  position: relative;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+  box-sizing: content-box;
+  z-index: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+div.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+div.scrollbar {
+  display: block;
+  position: absolute;
+  right: 5vw;
+  top: 0;
+  width: 2vw;
+  height: calc(100% - 8vh);
+  background: white;
+  border: solid #a5a7aa 1.5px;
+  border-radius: 100000px;
+  box-sizing: border-box;
+  transition: width 0.25s, opacity 0.25s;
+  z-index: 1;
+  user-select: none;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+  opacity: 1;
+}
+div.scrollbar.invisible {
+  width: 0px;
+  opacity: 0;
+}
+div.scrollbar .scrollbar-nub {
+  display: block;
+  position: absolute;
+  height: 0;
+  top: 0;
+  width: 100%;
+  background: #a5a7aa;
+  border-radius: 100000px;
+  box-sizing: content-box;
+  padding-top: 2px;
+  transition: transform 0.1s, height 0.25s;
+}
+
+/*# sourceMappingURL=style.css.map */

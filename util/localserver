@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+const express = require('express')
+const WebSocket = require('ws')
+const chokidar = require('chokidar')
+const app = express()
+const port = 8000
+const wsport = 8080
+
+const server = new WebSocket.Server({port: wsport})
+const clients = []
+
+server.on('connection', (wsclient) => {
+	clients.push(wsclient)
+	wsclient.on('close', () => {
+		let index = clients.indexOf(wsclient)
+
+		if (index != -1)
+			clients.splice(index, 1)
+	})
+})
+
+chokidar.watch('.').on('all', (event, path) => {
+	for (let client of clients)
+		if (client.readyState === WebSocket.OPEN)
+			client.send("refresh")
+})
+
+app.use(express.static('.'))
+
+app.listen(port, () => {
+	console.log(`Listening at http://localhost:${port}`)
+	console.log(`WebSocket refresh at http://localhost:${wsport}`)
+	console.log(`Run this code to automatically refresh the website when the contents of this folder change:
+	const ws = new WebSocket("ws://localhost:${wsport}");
+	ws.onmessage = (msg) => {
+		console.log("WS: ", msg.data)
+		if (msg.data == 'refresh')
+			window.location.reload()
+	};
+`)
+})

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1048.82 737.01" style="enable-background:new 0 0 1048.82 737.01;" xml:space="preserve">
+<style type="text/css">
+	.st0{clip-path:url(#SVGID_2_);fill:#FFFFFF;}
+	.st1{clip-path:url(#SVGID_2_);}
+	.st2{opacity:0.08;clip-path:url(#SVGID_4_);}
+	.st3{filter:url(#Adobe_OpacityMaskFilter);}
+	.st4{clip-path:url(#SVGID_6_);fill:url(#SVGID_8_);}
+	.st5{clip-path:url(#SVGID_6_);mask:url(#SVGID_7_);}
+	.st6{clip-path:url(#SVGID_10_);fill:#3E3C38;}
+	.st7{clip-path:url(#SVGID_12_);fill:#FFFFFF;}
+	.st8{clip-path:url(#SVGID_12_);}
+	.st9{opacity:0.08;clip-path:url(#SVGID_14_);}
+	.st10{filter:url(#Adobe_OpacityMaskFilter_1_);}
+	.st11{clip-path:url(#SVGID_16_);fill:url(#SVGID_18_);}
+	.st12{clip-path:url(#SVGID_16_);mask:url(#SVGID_17_);}
+	.st13{clip-path:url(#SVGID_20_);fill:#3E3C38;}
+</style>
+<g>
+	<defs>
+		<rect id="SVGID_1_" x="-1068.88" y="30.41" width="1133.86" height="801.52"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+	</clipPath>
+	<g class="st1">
+		<defs>
+			<rect id="SVGID_3_" x="-1068.88" y="30.41" width="1133.86" height="801.52"/>
+		</defs>
+		<clipPath id="SVGID_4_">
+			<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
+		</clipPath>
+	</g>
+</g>
+<g>
+	<defs>
+		<rect id="SVGID_11_" x="-76.47" y="31.39" width="1133.86" height="801.52"/>
+	</defs>
+	<clipPath id="SVGID_6_">
+		<use xlink:href="#SVGID_11_"  style="overflow:visible;"/>
+	</clipPath>
+	<rect x="2.9" y="31.39" style="clip-path:url(#SVGID_6_);fill:#FFFFFF;" width="795.94" height="439.17"/>
+	<g style="clip-path:url(#SVGID_6_);">
+		<defs>
+			<rect id="SVGID_13_" x="-76.47" y="31.39" width="1133.86" height="801.52"/>
+		</defs>
+		<clipPath id="SVGID_7_">
+			<use xlink:href="#SVGID_13_"  style="overflow:visible;"/>
+		</clipPath>
+		<g style="opacity:0.08;clip-path:url(#SVGID_7_);">
+			<g>
+				<defs>
+					<rect id="SVGID_15_" x="588.11" y="118.78" width="647.13" height="645.11"/>
+				</defs>
+				<clipPath id="SVGID_8_">
+					<use xlink:href="#SVGID_15_"  style="overflow:visible;"/>
+				</clipPath>
+				<defs>
+					<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="588.11" y="118.78" width="647.13" height="645.11">
+						<feFlood  style="flood-color:white;flood-opacity:1" result="back"/>
+						<feBlend  in="SourceGraphic" in2="back" mode="normal"/>
+					</filter>
+				</defs>
+				<mask maskUnits="userSpaceOnUse" x="588.11" y="118.78" width="647.13" height="645.11" id="SVGID_10_">
+					<g class="st3">
+						
+							<linearGradient id="SVGID_12_" gradientUnits="userSpaceOnUse" x1="-1065.3125" y1="739.8986" x2="-1064.3125" y2="739.8986" gradientTransform="matrix(177.4895 151.0554 151.0554 -177.4895 78173.2109 292640.2812)">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#000000"/>
+						</linearGradient>
+						<polygon style="clip-path:url(#SVGID_8_);fill:url(#SVGID_12_);" points="859.94,-200.62 1553.65,389.77 963.41,1083.3 
+							269.7,492.91 						"/>
+					</g>
+				</mask>
+				<g style="clip-path:url(#SVGID_8_);mask:url(#SVGID_10_);">
+					<g>
+						<defs>
+							<rect id="SVGID_19_" x="588.11" y="118.78" width="647.13" height="645.11"/>
+						</defs>
+						<clipPath id="SVGID_14_">
+							<use xlink:href="#SVGID_19_"  style="overflow:visible;"/>
+						</clipPath>
+						<polygon style="clip-path:url(#SVGID_14_);fill:#3E3C38;" points="597.11,414.03 945.98,762.9 1226.24,416.31 935.72,125.78 
+													"/>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+</svg>
