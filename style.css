@@ -139,6 +139,10 @@ main article.food-element.large .food-details {
 main article.food-element.large .food-details .food-blank {
   flex-basis: calc(22vh - 2vw);
 }
+main article.food-element.large .food-details .food-details-additional {
+  height: 53vh;
+  opacity: 1;
+}
 main article.food-element .food-image {
   position: absolute;
   height: 22vh;
@@ -192,7 +196,18 @@ main article.food-element .food-details .food-summary {
 }
 main article.food-element .food-details .food-blank {
   transition: flex-basis 0.2s;
+  height: 22vh;
   flex: 0 0 11vh;
+}
+main article.food-element .food-details .food-details-additional {
+  height: 0;
+  width: 66%;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  transition: height 0.1s, opacity 0.25s;
+  top: 22vh;
+  left: 1vh;
 }
 main article.food-element:nth-child(2n+1) .food-details {
   left: 0;
@@ -210,12 +225,12 @@ main article.food-element:nth-child(2n+1) .food-image::before {
 main article.food-element:nth-child(2n+1).large .food-details {
   left: 0;
 }
-main article.food-element h1.food-title {
+main article.food-element h1 {
   font: 1.25vh "DIN Pro";
   font-weight: bold;
   text-transform: uppercase;
 }
-main article.food-element p.food-description {
+main article.food-element p {
   font: 0.72vh ALSSchlange;
 }
 main article.food-element p.food-discount {

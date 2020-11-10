@@ -146,6 +146,11 @@ main {
 				.food-blank {
 					flex-basis: calc(22vh - 2vw);
 				}
+
+				.food-details-additional {
+					height: 53vh;
+					opacity: 1;
+				}
 			}
 		}
 
@@ -217,9 +222,22 @@ main {
 				box-sizing: border-box;
 				height: 22vh;
 			}
+
 			.food-blank {
 				transition: flex-basis 0.2s;
+				height: 22vh;
 				flex: 0 0 11vh;
+			}
+
+			.food-details-additional {
+				height: 0;
+				width: 66%;
+				opacity: 0;
+				overflow: hidden;
+				position: absolute;
+				transition: height 0.1s, opacity 0.25s;
+				top: 22vh;
+				left: 1vh;
 			}
 		}
 		&:nth-child(2n+1) {
@@ -246,13 +264,13 @@ main {
 			}
 		}
 
-		h1.food-title {
+		h1 {
 			font: 1.25vh "DIN Pro";
 			font-weight: bold;
 			text-transform: uppercase;
 		}
 
-		p.food-description {
+		p {
 			font: 0.72vh ALSSchlange;
 		}
 

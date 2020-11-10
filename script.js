@@ -23,11 +23,16 @@ function wsreload() {
 	};
 }
 
-function el(type, klass) {
+function el(type, klass, ...children) {
 	const element = document.createElement(type);
 	if (klass) {
 		element.className = klass;
 	}
+
+	if (children.length > 0) {
+		element.append(...children);
+	}
+
 	return element;
 }
 
@@ -36,50 +41,46 @@ function text(str) {
 }
 
 function food_element(food_item) {
-	const food_el = el("article", "food-element");
-
-	const food_image = el("div", "food-image");
 	const img = el("img");
-	img.src = food_item.image;
-	food_image.append(img);
+	img.src = food_item.assetUrl;
+	const food_image = el("div", "food-image", img);
+	const food_title = el("h1", "food-title", text(food_item.itemName));
+	const food_description = el("p", "food-description", text(food_item.itemDescription));
 
-	const food_details = el("div", "food-details");
-	const food_blank = el("div", "food-blank");
+	const food_original = el("span", "food-original-price", text(food_item.itemPrice.toFixed(2)));
+	const percentage = Math.round(100 * (food_item.itemPrice - food_item.itemDiscountPrice) / food_item.itemDiscountPrice);
+	const food_percentage = el("span", "food-discount-percentage", text(percentage + "%"));
+	const food_price = el("p", "food-price", text(food_item.itemDiscountPrice.toFixed(2)));
 
-	const food_summary = el("div", "food-summary");
+	const food_discount = el(
+		"p", "food-discount",
+		text("("), food_original,
+		el("span", "food-original-price-trailer", text("kn ")),
+		food_percentage, text(")"));
 
-	const food_title = el("h1", "food-title");
-	food_title.append(text(food_item.name));
+	const food_summary = el(
+		"div", "food-summary",
+		food_title, food_description,
+		food_discount, food_price);
 
-	const food_description = el("p", "food-description");
-	food_description.append(text(food_item.description));
+	const food_declaration = el(
+		"p", "food-declaration",
+		el("h1", "food-declaration-title", text("Opis proizvoda")),
+		text(food_item.itemDeclaration));
 
-	const food_discount = el("p", "food-discount");
+	const food_details_additional = el(
+		"div", "food-details-additional",
+		food_declaration);
 
-	const food_original = el("span", "food-original-price");
-	food_original.append(text(food_item.price));
-	const food_percentage = el("span", "food-discount-percentage");
-	food_percentage.append(text(food_item.discount));
+	const food_details = el(
+		"div", "food-details",
+		food_summary, el("div", "food-blank"),
+		food_details_additional);
 
-	const kn = el("span", "food-original-price-trailer");
-	kn.append(text("kn "));
+	const food_el = el(
+		"article", "food-element",
+		food_image, food_details);
 
-	food_discount.append(
-		text("("),
-		food_original,
-		kn,
-		food_percentage,
-		text(")")
-	);
-
-	const food_price = el("p", "food-price");
-	food_price.append(text(food_item.discount_price));
-
-	food_summary.append(food_title, food_description, food_discount, food_price);
-
-	food_details.append(food_summary, food_blank);
-
-	food_el.append(food_image, food_details);
 	food_el.addEventListener("click", () => {
 		food_el.classList.toggle("large");
 		setTimeout(() => {
@@ -233,8 +234,8 @@ function current_second() {
 }
 
 window.settings = {
-	rotate: false,
-	rotate_interval: 10,
+	rotate: true,
+	rotate_interval: 5,
 	rotate_index: 0,
 	rotate_time: 0
 };
@@ -244,19 +245,32 @@ function kongo() {
 	mouse_listen();
 	const main = scrollable(document.querySelector("main"));
 
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < 20; i++) {
 		main.append(food_element({
-			name: "Salata s piletinom",
-			price: "17,99",
-			discount: "-25%",
-			discount_price: "13,50",
-			description: "pileća prsa s grilla na salati od baby špinata i "
-			+ "listova cikle, rajčice, ljubičastog luka, rikole i svježih "
-			+ "krastavaca, obogaćena sjemenkama grillanog sezama",
-			amount: "100",
-			uom: "g",
-			price: "14.99",
-			image: "graphics/plate.png"
+			screenDetailId: 1,
+			screenId: 1,
+			itemAssetId: 1,
+			itemOrder: 1,
+			itemName: "Salata s piletinom",
+			itemPrice: 17.99,
+			itemDiscountPrice: 13.5,
+			itemDescription: "pileća prsa s grilla na salati od baby špinata i "
+				+ "listova cikle, rajčice, ljubičastog luka, rikole i svježih "
+				+ "krastavaca, obogaćena sjemenkama grillanog sezama",
+			itemDeclaration: "Kiseli kupus,luk,papar,sol, lovor,paprika slatka, "
+				+ "vegeta dimljena slanina,ulje. Proizvodi:Konzum d.d. Cuvati na "
+				+ "temp.od 4° do 6° C",
+			itemAmount: "100",
+			itemUom: "g",
+			itemAllergens: null,
+			itemNutritionFacts: null,
+			itemFooter: null,
+			assetName: "Slika",
+			assetUrl: "graphics/plate.png",
+			assetSize: 123,
+			assetWidth: 100,
+			assetHeight: 100,
+			assetGeometry: "left"
 		}));
 	}
 
