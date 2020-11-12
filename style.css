@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @font-face {
   font-family: ALSSchlange;
   src: url("fonts/alsschlangeregular.otf");
@@ -35,6 +36,62 @@
     opacity: 0;
   }
 }
+@keyframes spin-pulse {
+  0% {
+    transform: rotate(0deg);
+    border-width: 1vh;
+  }
+  25% {
+    transform: rotate(360deg);
+  }
+  50% {
+    transform: rotate(720deg);
+    border-width: 0vh;
+  }
+  75% {
+    transform: rotate(1080deg);
+  }
+  100% {
+    transform: rotate(1440deg);
+    border-width: 1vh;
+  }
+}
+.no-overflow {
+  overflow: hidden;
+}
+
+.scrollable {
+  overflow: auto;
+}
+
+.table-container {
+  position: relative;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+table th {
+  position: sticky;
+  top: 0;
+  font-family: "DIN Pro", sans;
+  border-bottom: 2px solid #3c3835;
+  background: white;
+}
+table td, table th {
+  padding-left: 8px;
+}
+table tr:nth-child(2n) {
+  background: #0001;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "DIN Pro", sans;
+  text-transform: uppercase;
+}
+
 html, body {
   background-color: white;
   background: url("graphics/PODLOGA.svg");
@@ -52,6 +109,7 @@ body {
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
+  font-family: ALSSchlange, serif;
 }
 body::after {
   /* Fadein */
@@ -69,21 +127,115 @@ body::after {
   animation: 0.5s fadeout forwards;
 }
 
-header {
-  flex: 0 0 auto;
-  position: relative;
-  background: #3c3835;
-  height: 13vh;
-  width: 100%;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+    display: initial;
+  }
+  100% {
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+  }
+}
+body:not([logged_in=true]) .logged-in {
+  display: none !important;
+}
+
+.hidden {
+  opacity: 0;
+  display: none;
+}
+
+.fadein {
+  animation: fade-in 0.25s forwards;
+}
+
+.fadeout {
+  animation: fade-out 0.25s forwards;
+}
+
+.follow-mouse {
+  position: fixed;
+  max-width: calc(50vmin - 16px);
+  max-height: calc(50vmin - 16px);
+  background: #0009;
+  backdrop-filter: blur(5px);
+  padding: 8px;
+}
+.mouse-left.mouse-top .follow-mouse {
+  left: calc(var(--mouse-x) * 100% + 16px);
+  top: calc(var(--mouse-y) * 100% + 16px);
+  transform: translate(0%, 0%);
+}
+.mouse-right.mouse-top .follow-mouse {
+  left: calc(var(--mouse-x) * 100% - 16px);
+  top: calc(var(--mouse-y) * 100% + 16px);
+  transform: translate(-100%, 0%);
+}
+.mouse-left.mouse-bottom .follow-mouse {
+  left: calc(var(--mouse-x) * 100% + 16px);
+  top: calc(var(--mouse-y) * 100% - 16px);
+  transform: translate(0%, -100%);
+}
+.mouse-right.mouse-bottom .follow-mouse {
+  left: calc(var(--mouse-x) * 100% - 16px);
+  top: calc(var(--mouse-y) * 100% - 16px);
+  transform: translate(-100%, -100%);
+}
+
+img {
+  opacity: 1;
+  transition: opacity 0.25s;
+}
+img.not-loaded {
+  opacity: 0;
+}
+img.icon {
+  user-select: none;
 }
 header img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 125%;
+}
+footer img {
   position: absolute;
   left: 50%;
   top: 50%;
   height: 100%;
   width: 100%;
   transform: translate(-50%, -50%);
-  height: 125%;
+  height: calc(100% - 2vh);
+  width: calc(100% - 2vh);
+}
+
+header {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  background: #3c3835;
+  height: 13vh;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+}
+header.smaller {
+  height: 6.5vh;
 }
 
 footer {
@@ -95,15 +247,128 @@ footer {
   width: 13vh;
   padding: 1vh;
 }
-footer img {
+
+.card {
+  display: block;
+  background: white;
+  margin: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.card.full {
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+}
+
+.full {
+  width: 100%;
+  height: 100%;
+}
+
+.flex-static {
+  flex: 0 0 auto;
+}
+
+.flex-dynamic {
+  flex: 1 1;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-middle {
+  align-items: center;
+}
+
+.flex-horizontal {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.flex-vertical {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.flex-inline {
+  display: inline-flex;
+}
+
+.fit-content {
+  max-width: fit-content;
+  max-height: fit-content;
+}
+
+span.icon {
+  font-size: 24px;
+  user-select: none;
+}
+span.icon::after {
+  content: "︎";
+}
+
+button {
+  background: #3c3835;
+  color: white;
+  padding: 8px 8px;
+  text-transform: uppercase;
+  border: none;
+  font-family: "DIN Pro", sans-serif, sans;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+button.icon {
+  background: transparent;
+  color: #3c3835;
+}
+button.icon:disabled {
+  opacity: 0;
+}
+button.icon:hover, button.icon:focus {
+  background: rgba(60, 56, 53, 0.1);
+}
+button.icon:active {
+  background: rgba(60, 56, 53, 0.2);
+}
+button:hover, button:focus {
+  background: #514c48;
+}
+button:active {
+  background: #363230;
+}
+button:disabled, button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+input, textarea {
+  background: white;
+  color: #3c3835;
+  border: 2px solid #3c3835;
+  padding: 4px;
+  font-family: "DIN Pro", sans-serif, sans;
+  font-size: 14px;
+  resize: none;
+}
+input.changed, textarea.changed {
+  background: #f8d3b7;
+}
+
+textarea {
+  padding: 4px;
+}
+
+form.login-form {
+  display: flex;
+  flex-flow: column nowrap;
   position: absolute;
   left: 50%;
   top: 50%;
-  height: 100%;
-  width: 100%;
   transform: translate(-50%, -50%);
-  height: calc(100% - 2vh);
-  width: calc(100% - 2vh);
+}
+form.login-form input {
+  margin-bottom: 16px;
 }
 
 main {
@@ -119,14 +384,11 @@ main article.food-element {
   margin-left: 5vw;
   margin-right: 5vw;
   box-sizing: border-box;
-  transition: margin-right 0.25s, opacity 0.25s, filter 0.25s, height 0.2s;
+  transition: margin-right 0.25s, opacity 0.25s, height 0.2s;
   z-index: 1;
-  /* filter: blur(calc((1 - var(--middle-distance)) * 10px - 9px)); */
-  /* opacity: calc(0.8 + var(--middle-distance)); */
 }
 main article.food-element.unfocused {
   opacity: 0.5;
-  filter: blur(3px);
 }
 main article.food-element.large {
   height: 75vh;
@@ -150,29 +412,46 @@ main article.food-element .food-image {
   z-index: 2;
   transform: translateX(-50%);
   filter: brightness(120%);
+  background: white;
+  border-radius: 100%;
 }
 main article.food-element .food-image img {
   height: 100%;
   border-radius: 100%;
   position: relative;
   max-height: 22vh;
+  z-index: 3;
+}
+main article.food-element .food-image::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 25%;
+  top: 25%;
+  bottom: 25%;
+  right: 25%;
+  border-top: 1vh solid transparent;
+  border-bottom: 1vh solid transparent;
+  border-left: 1vh solid #3c3835;
+  border-right: 1vh solid #3c3835;
+  border-radius: 100%;
   z-index: 2;
+  animation: spin-pulse 4s infinite;
 }
 main article.food-element .food-image::before {
   /* Shadow */
   content: "";
   display: block;
   position: absolute;
-  /* background: linear-gradient(to top, transparent, $primary); */
   left: 0;
-  top: 0;
+  top: 37.5%;
   width: 100%;
-  height: 50%;
+  height: 12.5%;
   z-index: 1;
   transform-origin: bottom;
   transform: rotate(45deg);
-  box-shadow: 0 5.5vh rgba(60, 56, 53, 0.95), 0 11vh rgba(60, 56, 53, 0.9), 0 16.5vh rgba(60, 56, 53, 0.85), 0 22vh rgba(60, 56, 53, 0.8), 0 27.5vh rgba(60, 56, 53, 0.75), 0 33vh rgba(60, 56, 53, 0.7), 0 38.5vh rgba(60, 56, 53, 0.65), 0 44vh rgba(60, 56, 53, 0.6), 0 49.5vh rgba(60, 56, 53, 0.55), 0 55vh rgba(60, 56, 53, 0.5), 0 60.5vh rgba(60, 56, 53, 0.45), 0 66vh rgba(60, 56, 53, 0.4), 0 71.5vh rgba(60, 56, 53, 0.35), 0 77vh rgba(60, 56, 53, 0.3), 0 82.5vh rgba(60, 56, 53, 0.25);
-  opacity: 0.1;
+  box-shadow: 0 2.75vh rgba(60, 56, 53, 0.375), 0 5.5vh rgba(60, 56, 53, 0.35), 0 8.25vh rgba(60, 56, 53, 0.325), 0 11vh rgba(60, 56, 53, 0.3), 0 13.75vh rgba(60, 56, 53, 0.275), 0 16.5vh rgba(60, 56, 53, 0.25), 0 19.25vh rgba(60, 56, 53, 0.225), 0 22vh rgba(60, 56, 53, 0.2), 0 24.75vh rgba(60, 56, 53, 0.175), 0 27.5vh rgba(60, 56, 53, 0.15), 0 30.25vh rgba(60, 56, 53, 0.125), 0 33vh rgba(60, 56, 53, 0.1), 0 35.75vh rgba(60, 56, 53, 0.075), 0 38.5vh rgba(60, 56, 53, 0.05), 0 41.25vh rgba(60, 56, 53, 0.025);
+  opacity: 0.2;
 }
 main article.food-element .food-details {
   display: flex;

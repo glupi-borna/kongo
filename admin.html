@@ -1,0 +1,39 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>KONGO</title>
+	<meta name="description" content="Konzum Gastro Odjel">
+	<meta name="author" content="KnowIT">
+
+	<link rel="stylesheet" href="style.css">
+	<script src="lib/lib.js"></script>
+	<script src="admin-screen.js"></script>
+</head>
+
+<body>
+	<header class="smaller">
+		<img src="graphics/gastro-logo.svg"/>
+		<button class="logged-in" onclick="log_out()">LOGOUT</button>
+	</header>
+	<main>
+		<form id="login" class="login-form" onsubmit="login_submit(event)">
+			<input placeholder="Username" name="username" type="username" required/>
+			<input placeholder="Password" name="password" type="password" required/>
+			<button type="submit" onclick="reset_validity(this)">Log in</button>
+		</form>
+		<section id="mainscreen" class="full">
+			<div class="card full flex-vertical">
+				<h1 class="flex-static no-overflow">Artikli</h1>
+				<div id="articles"
+					 class="flex-dynamic scrollable table-container">
+				</div>
+			</div>
+		</section>
+	</main>
+</body>
+</html>
+

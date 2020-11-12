@@ -39,6 +39,68 @@ $primary: #3c3835;
 	}
 }
 
+@keyframes spin-pulse {
+	0% {
+		transform: rotate(0deg);
+		border-width: 1vh;
+	}
+	25% {
+		transform: rotate(360deg);
+	}
+	50% {
+		transform: rotate(720deg);
+		border-width: 0vh;
+	}
+	75% {
+		transform: rotate(1080deg);
+	}
+	100% {
+		transform: rotate(1440deg);
+		border-width: 1vh;
+	}
+}
+
+.no-overflow {
+	overflow: hidden;
+}
+
+.scrollable {
+	overflow: auto;
+}
+
+.table-container {
+	position: relative;
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+	min-width: 100%;
+
+	th {
+		position: sticky;
+		top: 0;
+		font-family: "DIN Pro", sans;
+		border-bottom: 2px solid $primary;
+		background: white;
+	}
+
+	td, th {
+		padding-left: 8px;
+	}
+
+	tr {
+		&:nth-child(2n) {
+			background: #0001;
+		}
+	}
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "DIN Pro", sans;
+	text-transform: uppercase;
+}
+
 html, body {
 	background-color: white;
 	background: url("graphics/PODLOGA.svg");
@@ -56,6 +118,7 @@ body {
 	flex-flow: column nowrap;
 	justify-content: space-between;
 	align-items: center;
+	font-family: ALSSchlange, serif;
 
 	&::after {
 		/* Fadein */
@@ -74,21 +137,129 @@ body {
 	}
 }
 
-header {
-	flex: 0 0 auto;
-	position: relative;
-	background: $primary;
-	height: 13vh;
-	width: 100%;
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		pointer-events: all;
+	}
+}
 
-	img {
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+		display: initial;
+	}
+	100% {
+		opacity: 0;
+		display: none;
+		pointer-events: none;
+	}
+}
+
+body:not([logged_in=true]) .logged-in {
+	display: none !important;
+}
+
+.hidden {
+	opacity: 0;
+	display: none;
+}
+
+.fadein {
+	animation: fade-in 0.25s forwards;
+}
+
+.fadeout {
+	animation: fade-out 0.25s forwards;
+}
+
+$offset: 16px;
+.follow-mouse {
+	position: fixed;
+	max-width: calc(50vmin - #{$offset});
+	max-height: calc(50vmin - #{$offset});
+	background: #0009;
+	backdrop-filter: blur(5px);
+	padding: 8px;
+
+	.mouse-left.mouse-top & {
+		left: calc(var(--mouse-x) * 100% + #{$offset});
+		top: calc(var(--mouse-y) * 100% + #{$offset});
+		transform: translate(0%, 0%);
+	}
+
+	.mouse-right.mouse-top & {
+		left: calc(var(--mouse-x) * 100% - #{$offset});
+		top: calc(var(--mouse-y) * 100% + #{$offset});
+		transform: translate(-100%, 0%);
+	}
+
+	.mouse-left.mouse-bottom & {
+		left: calc(var(--mouse-x) * 100% + #{$offset});
+		top: calc(var(--mouse-y) * 100% - #{$offset});
+		transform: translate(0%, -100%);
+	}
+
+	.mouse-right.mouse-bottom & {
+		left: calc(var(--mouse-x) * 100% - #{$offset});
+		top: calc(var(--mouse-y) * 100% - #{$offset});
+		transform: translate(-100%, -100%);
+	}
+}
+
+img {
+	opacity: 1;
+	transition: opacity 0.25s;
+
+	&.not-loaded {
+		opacity: 0;
+	}
+
+	&.icon {
+		user-select: none;
+	}
+
+	header & {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		height: 125%;
+	}
+
+	footer & {
 		position: absolute;
 		left: 50%;
 		top: 50%;
 		height: 100%;
 		width: 100%;
 		transform: translate(-50%, -50%);
-		height: 125%;
+		height: calc(100% - 2vh);
+		width: calc(100% - 2vh);
+	}
+}
+
+header {
+	flex: 0 0 auto;
+	position: relative;
+
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-end;
+	align-items: center;
+
+	background: $primary;
+	height: 13vh;
+	width: 100%;
+
+	box-sizing: border-box;
+	padding: 8px;
+
+	&.smaller {
+		height: 6.5vh;
 	}
 }
 
@@ -100,17 +271,142 @@ footer {
 	height: 4vh;
 	width: 13vh;
 	padding: 1vh;
-	img {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		height: 100%;
-		width: 100%;
-		transform: translate(-50%, -50%);
-		height: calc(100% - 2vh);
-		width: calc(100% - 2vh);
+}
+
+.card {
+	display: block;
+	background: white;
+	margin: 16px;
+	padding: 16px;
+	box-sizing: border-box;
+
+	&.full {
+		width: calc(100% - 32px);
+		height: calc(100% - 32px);
 	}
 }
+
+.full {
+	width: 100%;
+	height: 100%;
+}
+
+.flex-static {
+	flex: 0 0 auto;
+}
+
+.flex-dynamic {
+	flex: 1 1;
+}
+
+.flex-center {
+	justify-content: center;
+}
+
+.flex-middle {
+	align-items: center;
+}
+
+.flex-horizontal {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+.flex-vertical {
+	display: flex;
+	flex-flow: column nowrap;
+}
+
+.flex-inline {
+	display: inline-flex;
+}
+
+.fit-content {
+	max-width: fit-content;
+	max-height: fit-content;
+}
+
+span.icon {
+	font-size: 24px;
+	user-select: none;
+
+	&::after {
+		content: "\00FE0E"
+	}
+}
+
+button {
+	background: $primary;
+	color: white;
+	padding: 8px 8px;
+	text-transform: uppercase;
+	border: none;
+	font-family: "DIN Pro", sans-serif, sans;
+	cursor: pointer;
+	transition: opacity 0.1s;
+
+	&.icon {
+		background: transparent;
+		color: $primary;
+
+		&:disabled {
+			opacity: 0;
+		}
+
+		&:hover, &:focus {
+			background: transparentize($primary, 0.9);
+		}
+
+		&:active {
+			background: transparentize($primary, 0.8);
+		}
+	}
+
+	&:hover, &:focus {
+		background: scale-color($primary, $lightness: 10%);
+	}
+
+	&:active {
+		background: scale-color($primary, $lightness: -10%);
+	}
+
+	&:disabled, &.disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
+
+input, textarea {
+	background: white;
+	color: $primary;
+	border: 2px solid $primary;
+	padding: 4px;
+	font-family: "DIN Pro", sans-serif, sans;
+	font-size: 14px;
+	resize: none;
+
+	&.changed {
+		background: scale-color($primary, $saturation: 80%, $lightness: 80%);
+	}
+}
+
+textarea {
+	padding: 4px;
+}
+
+form.login-form {
+	display: flex;
+	flex-flow: column nowrap;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	input {
+		margin-bottom: 16px;
+	}
+}
+
 main {
 	position: relative;
 	flex: 1;
@@ -124,15 +420,11 @@ main {
 		margin-left: 5vw;
 		margin-right: 5vw;
 		box-sizing: border-box;
-		transition: margin-right 0.25s, opacity 0.25s, filter 0.25s, height 0.2s;
+		transition: margin-right 0.25s, opacity 0.25s, height 0.2s;
 		z-index: 1;
-
-		/* filter: blur(calc((1 - var(--middle-distance)) * 10px - 9px)); */
-		/* opacity: calc(0.8 + var(--middle-distance)); */
 
 		&.unfocused {
 			opacity: 0.5;
-			filter: blur(3px);
 		}
 
 		&.large {
@@ -161,13 +453,32 @@ main {
 			z-index: 2;
 			transform: translateX(-50%);
 			filter: brightness(120%);
+			background: white;
+			border-radius: 100%;
 
 			img {
 				height: 100%;
 				border-radius: 100%;
 				position: relative;
 				max-height: 22vh;
+				z-index: 3;
+			}
+
+			&::after {
+				content: "";
+				display: block;
+				position: absolute;
+				left: 25%;
+				top: 25%;
+				bottom: 25%;
+				right: 25%;
+				border-top: 1vh solid transparent;
+				border-bottom: 1vh solid transparent;
+				border-left: 1vh solid $primary;
+				border-right: 1vh solid $primary;
+				border-radius: 100%;
 				z-index: 2;
+				animation: spin-pulse 4s infinite;
 			}
 
 			&::before {
@@ -175,30 +486,29 @@ main {
 				content: "";
 				display: block;
 				position: absolute;
-				/* background: linear-gradient(to top, transparent, $primary); */
 				left: 0;
-				top: 0;
+				top: 37.5%;
 				width: 100%;
-				height: 50%;
+				height: 12.5%;
 				z-index: 1;
 				transform-origin: bottom;
 				transform: rotate(45deg);
-				box-shadow: 0 5.5vh transparentize($primary, 0.05),
-							0 11vh transparentize($primary, 0.1),
-							0 16.5vh transparentize($primary, 0.15),
-							0 22vh transparentize($primary, 0.2),
-							0 27.5vh transparentize($primary, 0.25),
-							0 33vh transparentize($primary, 0.3),
-							0 38.5vh transparentize($primary, 0.35),
-							0 44vh transparentize($primary, 0.4),
-							0 49.5vh transparentize($primary, 0.45),
-							0 55vh transparentize($primary, 0.5),
-							0 60.5vh transparentize($primary, 0.55),
-							0 66vh transparentize($primary, 0.6),
-							0 71.5vh transparentize($primary, 0.65),
-							0 77vh transparentize($primary, 0.7),
-							0 82.5vh transparentize($primary, 0.75);
-				opacity: 0.1;
+				box-shadow: 0 2.75vh transparentize($primary, 0.625),
+							0 5.5vh transparentize($primary, 0.6499999999999999),
+							0 8.25vh transparentize($primary, 0.675),
+							0 11.0vh transparentize($primary, 0.7),
+							0 13.75vh transparentize($primary, 0.725),
+							0 16.5vh transparentize($primary, 0.75),
+							0 19.25vh transparentize($primary, 0.775),
+							0 22.0vh transparentize($primary, 0.8),
+							0 24.75vh transparentize($primary, 0.825),
+							0 27.5vh transparentize($primary, 0.85),
+							0 30.25vh transparentize($primary, 0.875),
+							0 33.0vh transparentize($primary, 0.9),
+							0 35.75vh transparentize($primary, 0.925),
+							0 38.5vh transparentize($primary, 0.95),
+							0 41.25vh transparentize($primary, 0.975);
+				opacity: 0.2;
 			}
 		}
 
@@ -240,6 +550,7 @@ main {
 				left: 1vh;
 			}
 		}
+
 		&:nth-child(2n+1) {
 			.food-details {
 				left: 0;
