@@ -11,6 +11,8 @@
 
 	<link rel="stylesheet" href="style.css">
 	<script src="lib/lib.js"></script>
+	<script src="api.js"></script>
+	<script src="lib/elements/table.js"></script>
 	<script src="admin-screen.js"></script>
 </head>
 
@@ -27,9 +29,18 @@
 		</form>
 		<section id="mainscreen" class="full">
 			<div class="card full flex-vertical">
-				<h1 class="flex-static no-overflow">Artikli</h1>
-				<div id="articles"
-					 class="flex-dynamic scrollable table-container">
+				<h1 id="title"
+					class="flex-static no-overflow"></h1>
+				<div class="flex-dynamic flex-vertical no-overflow">
+					<div id="articles"
+						 class="flex-vertical flex-dynamic no-overflow">
+					</div>
+					<div id="screens"
+						 class="flex-vertical flex-dynamic no-overflow">
+					</div>
+					<div id="locations"
+						 class="flex-vertical flex-dynamic no-overflow">
+					</div>
 				</div>
 			</div>
 		</section>

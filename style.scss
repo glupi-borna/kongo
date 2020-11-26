@@ -1,4 +1,47 @@
+@function sizeadapt($original) {
+	// The app used to be written in such a way where there were
+	// always 3 items onscreen (vertically) and each item was
+	// 22vh tall.
+	// This function converts the original value (relative to the
+	// old size of the onscreen item) into the new, adaptive size.
+	@return calc(var(--height) * #{$original / 22});
+}
+
+@function div($a, $b) {
+	@return $a / $b;
+}
+
+@function shadowlist($color, $offset, $offset_step, $alpha, $alpha_step, $steps) {
+	$str: "";
+	@for $i from 1 through $steps {
+		@if ($i != 1) {
+			$str: $str + ",";
+		}
+		$str: $str + "0 " + $offset + " " + transparentize($color, $alpha);
+		$offset: $offset + $offset_step;
+		$alpha: $alpha + $alpha_step;
+	}
+	@return #{$str};
+}
+
 $primary: #3c3835;
+
+$fontsize-0_72: sizeadapt(0.72);
+$fontsize-1_25: sizeadapt(1.25);
+$fontsize-1_3: sizeadapt(1.3);
+$fontsize-5: sizeadapt(5);
+
+// Item stuff
+$small: 22vh;
+$medium: 35.25vh;
+$large: 75vh;
+$scale-s: $small / $large;
+$scale-m: $medium / $large;
+$scale-l: $large / $large;
+$shadow: 16px;
+$shadowsteps: 25;
+$shadowstep: 1 / $shadowsteps;
+$invlarge: 1 / 75;
 
 @font-face {
 	font-family: ALSSchlange;
@@ -39,25 +82,30 @@ $primary: #3c3835;
 	}
 }
 
-@keyframes spin-pulse {
+@keyframes load {
 	0% {
-		transform: rotate(0deg);
-		border-width: 1vh;
-	}
-	25% {
-		transform: rotate(360deg);
+		transform: translate(-50%, -50%) scale(0.1);
 	}
 	50% {
-		transform: rotate(720deg);
-		border-width: 0vh;
-	}
-	75% {
-		transform: rotate(1080deg);
+		transform: translate(-50%, -50%) scale(5);
 	}
 	100% {
-		transform: rotate(1440deg);
-		border-width: 1vh;
+		transform: translate(-50%, -50%) scale(0.1);
 	}
+}
+
+@mixin loader {
+	content: "";
+	position: absolute;
+	display: block;
+	left: 50%;
+	top: 50%;
+	width: 10%;
+	height: 10%;
+	border-radius: 100%;
+	background: mix($primary, white, 50%);
+	animation: load 2s infinite;
+	z-index: 2;
 }
 
 .no-overflow {
@@ -92,6 +140,12 @@ table {
 	tr {
 		&:nth-child(2n) {
 			background: #0001;
+		}
+		&.clickable {
+			cursor: pointer;
+			&:hover {
+				background: transparentize($primary, 0.8);
+			}
 		}
 	}
 }
@@ -150,16 +204,18 @@ body {
 @keyframes fade-out {
 	0% {
 		opacity: 1;
-		display: initial;
 	}
 	100% {
 		opacity: 0;
-		display: none;
-		pointer-events: none;
+		pointer-events: none !important;
 	}
 }
 
 body:not([logged_in=true]) .logged-in {
+	display: none !important;
+}
+
+.display-none {
 	display: none !important;
 }
 
@@ -299,6 +355,14 @@ footer {
 	flex: 1 1;
 }
 
+.flex-start {
+	justify-content: flex-start;
+}
+
+.flex-end {
+	justify-content: flex-end;
+}
+
 .flex-center {
 	justify-content: center;
 }
@@ -407,215 +471,294 @@ form.login-form {
 	}
 }
 
+article.food-element {
+	height: var(--height);
+	position: relative;
+	margin-top: 4.5vh;
+	margin-left: 5vw;
+	margin-right: 5vw;
+	box-sizing: border-box;
+	transition: margin-right 0.25s, opacity 0.25s, height 0.2s, scale 0.5s;
+	z-index: 1;
+	$bias: 1;
+
+	@media (max-aspect-ratio: 5/3) {
+		&.focused {
+			scale: 1.1;
+		}
+	}
+
+	h1, p {
+		transition: font-size 0.25s;
+	}
+
+	h1 {
+		font: $fontsize-1_25 "DIN Pro";
+		font-weight: bold;
+		text-transform: uppercase;
+	}
+
+	p {
+		font: $fontsize-0_72 ALSSchlange;
+	}
+
+	p.food-discount {
+		font: $fontsize-1_3 "DIN Pro";
+		font-weight: medium;
+		font-stretch: condensed;
+		margin: 0;
+		position: absolute;
+		bottom: 0;
+		transform: translateY(calc(-1 * #{$fontsize-5}));
+		padding-left: calc(var(--padding) * 0.5);
+		transition: transform 0.25s;
+
+		.food-original-price {
+			text-decoration: line-through 0.2vh;
+		}
+	}
+
+	p.food-price {
+		font: $fontsize-5 "DIN Pro";
+		font-weight: bold;
+		margin: 0;
+		position: absolute;
+		bottom: 0;
+		&::after {
+			content: "kn";
+			font-size: 50.4%;
+		}
+	}
+
+	@at-root .food-image {
+		position: absolute;
+		height: $large;
+		width: $large;
+		z-index: 2;
+		filter: brightness(120%);
+		border-radius: 100%;
+		transform-origin: top left;
+		transform: scale(var(--scale));
+		transition: transform 0.25s;
+
+		img {
+			&.not-loaded {
+				background: white;
+				opacity: 1;
+				z-index: 1;
+			}
+
+			height: 100%;
+			border-radius: 100%;
+			position: relative;
+			z-index: 3;
+		}
+
+		&::after {
+			@include loader;
+		}
+
+		&::before {
+			/* Shadow */
+			content: "";
+			display: block;
+			position: absolute;
+			left: 0;
+			top: calc(50% - #{$shadow});
+			width: 100%;
+			height: $shadow;
+			z-index: 1;
+			transform-origin: bottom;
+			transform: rotate(45deg);
+			opacity: 0.2;
+			box-shadow: shadowlist($primary, $shadow, $shadow, 0, $shadowstep, $shadowsteps);
+		}
+
+		article.food-element:nth-child(2n+#{$bias}) & {
+			right: 0;
+			transform-origin: top right;
+			transform: scale(var(--scale));
+
+			&::before {
+				transform: rotate(-45deg);
+			}
+		}
+	}
+
+	@at-root .food-details {
+		display: flex;
+		flex-flow: row-reverse nowrap;
+		position: absolute;
+		left: var(--half-height);
+		width: calc(100% - var(--height) / 2);
+		height: 100%;
+		top: 0;
+		background: white;
+		padding: var(--padding);
+		box-sizing: border-box;
+		transition: width 0.2s, left 0.2s;
+
+		.food-summary {
+			flex: 2;
+			position: relative;
+			border-top: sizeadapt(0.3) solid $primary;
+			box-sizing: border-box;
+			height: calc(var(--height) - 2 * var(--padding));
+			transition: height 0.25s;
+		}
+
+		.food-blank {
+			transition: flex-basis 0.2s;
+			height: calc(var(--height));
+			flex: 0 0 var(--half-height);
+		}
+
+		.food-details-additional {
+			display: flex;
+			flex-flow: row;
+			height: 0;
+			width: 100%;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			transition: height 0.1s, opacity 0.25s;
+			top: 22vh;
+			left: var(--padding);
+			padding-top: 5.5vh;
+			padding-left: var(--padding);
+			padding-right: var(--padding);
+			box-sizing: border-box;
+
+			.food-details-column-left {
+				flex: 3;
+				margin-right: var(--padding);
+
+				> * {
+					border-top: 1px solid $primary;
+					margin-top: var(--padding);
+				}
+			}
+
+			.food-details-column-right {
+				flex: 2;
+				margin-left: var(--padding);
+			}
+
+			.food-nutrients-icons-icons {
+				display: flex;
+				flex-flow: row nowrap;
+				overflow: hidden;
+				padding-right: calc(var(--padding) * 2);
+
+				> div {
+					flex: 1;
+					margin: calc(var(--padding) * 0.1);
+
+					img {
+						width: 100%;
+					}
+				}
+			}
+
+			.food-nutrients-table-table {
+				tr, td, th {
+					border: 0px solid transparent;
+					background: transparent;
+					padding: 0;
+				}
+
+				thead, tfoot {
+					tr:first-child {
+						td, th {
+							border-top: var(--padding) solid $primary;
+						}
+					}
+				}
+
+				td, th {
+					border-top: 1px solid $primary;
+				}
+
+				tr > * {
+					text-align: right;
+					&:first-child {
+						text-align: left;
+					}
+				}
+
+				tbody {
+					tr:first-child {
+						td, th {
+							border-top: calc(0.5 * var(--padding)) solid $primary;
+						}
+					}
+				}
+			}
+		}
+
+		article.food-element:nth-child(2n+#{$bias}) & {
+			left: 0;
+			flex-flow: row nowrap;
+		}
+	}
+
+	&.large {
+		height: #{$large};
+
+		.food-image, .food-blank, .food-summary {
+			--height: #{$small};
+			--half-height: #{$small / 2};
+			--scale: #{$scale-s};
+		}
+
+		.food-details {
+			width: calc(100% - 2vw);
+			left: 2vw;
+			right: 0;
+
+			.food-blank {
+				flex-basis: calc(#{$small} - 2vw);
+			}
+
+			.food-details-additional {
+				height: calc(#{$large - $small} - var(--padding));
+				width: calc(100% - var(--padding) * 2);
+				opacity: 1;
+			}
+		}
+	}
+
+	&:first-child {
+		margin-top: 4vh;
+	}
+
+	&:last-child {
+		margin-bottom: 8vh;
+	}
+}
+
 main {
 	position: relative;
 	flex: 1;
 	width: 100vw;
 	overflow: hidden;
+	--height: #{$medium};
+	--scale: #{$scale-m};
+	--half-height: #{$medium / 2};
+	--padding: #{$medium * 0.05};
 
-	article.food-element {
-		position: relative;
-		height: 22vh;
-		margin-top: 4.5vh;
-		margin-left: 5vw;
-		margin-right: 5vw;
-		box-sizing: border-box;
-		transition: margin-right 0.25s, opacity 0.25s, height 0.2s;
-		z-index: 1;
+	@media (max-aspect-ratio: 9/10) {
+		--height: #{$small};
+		--scale: #{$scale-s};
+		--half-height: #{$small / 2};
+		--padding: #{$small * 0.05};
+	}
 
-		&.unfocused {
-			opacity: 0.5;
-		}
-
-		&.large {
-			height: 75vh;
-
-			.food-details {
-				width: calc(100% - 2vw);
-				left: 2vw;
-				right: 0;
-
-				.food-blank {
-					flex-basis: calc(22vh - 2vw);
-				}
-
-				.food-details-additional {
-					height: 53vh;
-					opacity: 1;
-				}
-			}
-		}
-
-		.food-image {
-			position: absolute;
-			height: 22vh;
-			left: 11vh;
-			z-index: 2;
-			transform: translateX(-50%);
-			filter: brightness(120%);
-			background: white;
-			border-radius: 100%;
-
-			img {
-				height: 100%;
-				border-radius: 100%;
-				position: relative;
-				max-height: 22vh;
-				z-index: 3;
-			}
-
-			&::after {
-				content: "";
-				display: block;
-				position: absolute;
-				left: 25%;
-				top: 25%;
-				bottom: 25%;
-				right: 25%;
-				border-top: 1vh solid transparent;
-				border-bottom: 1vh solid transparent;
-				border-left: 1vh solid $primary;
-				border-right: 1vh solid $primary;
-				border-radius: 100%;
-				z-index: 2;
-				animation: spin-pulse 4s infinite;
-			}
-
-			&::before {
-				/* Shadow */
-				content: "";
-				display: block;
-				position: absolute;
-				left: 0;
-				top: 37.5%;
-				width: 100%;
-				height: 12.5%;
-				z-index: 1;
-				transform-origin: bottom;
-				transform: rotate(45deg);
-				box-shadow: 0 2.75vh transparentize($primary, 0.625),
-							0 5.5vh transparentize($primary, 0.6499999999999999),
-							0 8.25vh transparentize($primary, 0.675),
-							0 11.0vh transparentize($primary, 0.7),
-							0 13.75vh transparentize($primary, 0.725),
-							0 16.5vh transparentize($primary, 0.75),
-							0 19.25vh transparentize($primary, 0.775),
-							0 22.0vh transparentize($primary, 0.8),
-							0 24.75vh transparentize($primary, 0.825),
-							0 27.5vh transparentize($primary, 0.85),
-							0 30.25vh transparentize($primary, 0.875),
-							0 33.0vh transparentize($primary, 0.9),
-							0 35.75vh transparentize($primary, 0.925),
-							0 38.5vh transparentize($primary, 0.95),
-							0 41.25vh transparentize($primary, 0.975);
-				opacity: 0.2;
-			}
-		}
-
-		.food-details {
-			display: flex;
-			flex-flow: row-reverse nowrap;
-			position: absolute;
-			left: 11vh;
-			width: calc(100% - 11vh);
-			height: 100%;
-			top: 0;
-			background: white;
-			padding: 1vh;
-			box-sizing: border-box;
-			transition: width 0.2s, left 0.2s;
-
-			.food-summary {
-				flex: 2;
-				position: relative;
-				border-top: 0.3vh solid $primary;
-				box-sizing: border-box;
-				height: 22vh;
-			}
-
-			.food-blank {
-				transition: flex-basis 0.2s;
-				height: 22vh;
-				flex: 0 0 11vh;
-			}
-
-			.food-details-additional {
-				height: 0;
-				width: 66%;
-				opacity: 0;
-				overflow: hidden;
-				position: absolute;
-				transition: height 0.1s, opacity 0.25s;
-				top: 22vh;
-				left: 1vh;
-			}
-		}
-
-		&:nth-child(2n+1) {
-			.food-details {
-				left: 0;
-				flex-flow: row nowrap;
-			}
-
-			.food-image {
-				right: 11vh;
-				left: initial;
-				transform: translateX(50%);
-
-				&::before {
-					transform: rotate(-45deg);
-					/* transform: rotate(-45deg) scale(1, 4) translateY(50%); */
-				}
-			}
-
-			&.large {
-				.food-details {
-					left: 0;
-				}
-			}
-		}
-
-		h1 {
-			font: 1.25vh "DIN Pro";
-			font-weight: bold;
-			text-transform: uppercase;
-		}
-
-		p {
-			font: 0.72vh ALSSchlange;
-		}
-
-		p.food-discount {
-			font: 1.3vh "DIN Pro";
-			font-weight: medium;
-			font-stretch: condensed;
-			margin: 0;
-			position: absolute;
-			bottom: 7.5vh;
-			padding-left: 0.5vh;
-			.food-original-price {
-				text-decoration: line-through 0.2vh;
-			}
-		}
-
-		p.food-price {
-			font: 5vh "DIN Pro";
-			font-weight: bold;
-			margin: 0;
-			position: absolute;
-			bottom: 2vh;
-			&::after {
-				content: "kn";
-				font-size: 50.4%;
-			}
-		}
-
-		&:first-child {
-			margin-top: 4vh;
-		}
-		&:last-child {
-			margin-bottom: 8vh;
-		}
+	@media (min-aspect-ratio: 5/3) {
+		--height: #{$large};
+		--scale: #{$scale-l};
+		--half-height: #{$large / 2};
+		--padding: #{$large * 0.05};
 	}
 
 	&.has-scrollbar {

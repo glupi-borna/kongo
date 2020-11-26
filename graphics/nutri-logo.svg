@@ -1,8 +1,55 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 1200 1200" style="enable-background:new 0 0 1200 1200;" xml:space="preserve">
-<style type="text/css">
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 846.47003 1170.09"
+   xml:space="preserve"
+   sodipodi:docname="nutri-logo.svg"
+   width="846.47003"
+   height="1170.09"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"><metadata
+   id="metadata21"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs19" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1028"
+   id="namedview17"
+   showgrid="false"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0"
+   inkscape:zoom="0.55625733"
+   inkscape:cx="437.68247"
+   inkscape:cy="574.58607"
+   inkscape:window-x="0"
+   inkscape:window-y="24"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<style
+   type="text/css"
+   id="style2">
 	.st0{clip-path:url(#SVGID_2_);fill:#3E3C38;}
 	.st1{fill:#3E3C38;}
 	.st2{clip-path:url(#SVGID_4_);fill:#3E3C38;}
@@ -11,19 +58,42 @@
 	.st5{clip-path:url(#SVGID_8_);fill:none;stroke:#FFFFFF;stroke-width:3.992;}
 	.st6{clip-path:url(#SVGID_8_);fill:none;stroke:#FFFFFF;stroke-width:8;}
 </style>
-<g>
-	<defs>
-		<rect id="SVGID_5_" x="189.87" y="15.16" width="846.48" height="1170.1"/>
+<g
+   id="g14"
+   transform="translate(-189.87,-15.16)">
+	<defs
+   id="defs5">
+		<rect
+   id="SVGID_5_"
+   x="189.87"
+   y="15.16"
+   width="846.47998"
+   height="1170.1" />
 	</defs>
-	<clipPath id="SVGID_2_">
-		<use xlink:href="#SVGID_5_"  style="overflow:visible;"/>
+	<clipPath
+   id="SVGID_2_">
+		<use
+   xlink:href="#SVGID_5_"
+   style="overflow:visible"
+   id="use7"
+   x="0"
+   y="0"
+   width="100%"
+   height="100%" />
 	</clipPath>
-	<path class="st0" d="M613.11,15.15c-140.17,0-280.81,32.6-406.69,94.27l-16.56,8.11v18.43v377.82v548.04v18.16l16.21,8.2
-		c125.32,63.51,266.07,97.07,407.03,97.07s281.72-33.56,407.03-97.07l16.21-8.2v-18.16V135.97v-18.43l-16.56-8.11
-		C893.92,47.76,753.28,15.15,613.11,15.15 M613.11,44.72c134.75,0,269.51,30.42,393.68,91.25v925.86
-		c-123.52,62.59-258.59,93.87-393.68,93.87s-270.16-31.29-393.68-93.87c0-381.87,0-543.99,0-925.86
-		C343.62,75.14,478.36,44.72,613.11,44.72"/>
-	<path class="st0" d="M979.32,1044.76V797.48c-114.13-53.1-240.37-81.1-366.2-81.1c-125.85,0-252.07,28-366.2,81.1v247.28
-		c113.53,54.65,239.77,83.46,366.2,83.46S865.78,1099.41,979.32,1044.76"/>
+	<path
+   class="st0"
+   d="m 613.11,15.15 c -140.17,0 -280.81,32.6 -406.69,94.27 l -16.56,8.11 v 18.43 377.82 548.04 18.16 l 16.21,8.2 c 125.32,63.51 266.07,97.07 407.03,97.07 140.96,0 281.72,-33.56 407.03,-97.07 l 16.21,-8.2 v -18.16 -925.85 -18.43 l -16.56,-8.11 C 893.92,47.76 753.28,15.15 613.11,15.15 m 0,29.57 c 134.75,0 269.51,30.42 393.68,91.25 v 925.86 c -123.52,62.59 -258.59,93.87 -393.68,93.87 -135.09,0 -270.16,-31.29 -393.68,-93.87 0,-381.87 0,-543.99 0,-925.86 C 343.62,75.14 478.36,44.72 613.11,44.72"
+   clip-path="url(#SVGID_2_)"
+   id="path10"
+   inkscape:connector-curvature="0"
+   style="fill:#3e3c38" />
+	<path
+   class="st0"
+   d="M 979.32,1044.76 V 797.48 c -114.13,-53.1 -240.37,-81.1 -366.2,-81.1 -125.85,0 -252.07,28 -366.2,81.1 v 247.28 c 113.53,54.65 239.77,83.46 366.2,83.46 126.43,0 252.66,-28.81 366.2,-83.46"
+   clip-path="url(#SVGID_2_)"
+   id="path12"
+   inkscape:connector-curvature="0"
+   style="fill:#3e3c38" />
 </g>
 </svg>

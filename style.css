@@ -36,24 +36,15 @@
     opacity: 0;
   }
 }
-@keyframes spin-pulse {
+@keyframes load {
   0% {
-    transform: rotate(0deg);
-    border-width: 1vh;
-  }
-  25% {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) scale(0.1);
   }
   50% {
-    transform: rotate(720deg);
-    border-width: 0vh;
-  }
-  75% {
-    transform: rotate(1080deg);
+    transform: translate(-50%, -50%) scale(5);
   }
   100% {
-    transform: rotate(1440deg);
-    border-width: 1vh;
+    transform: translate(-50%, -50%) scale(0.1);
   }
 }
 .no-overflow {
@@ -85,6 +76,12 @@ table td, table th {
 }
 table tr:nth-child(2n) {
   background: #0001;
+}
+table tr.clickable {
+  cursor: pointer;
+}
+table tr.clickable:hover {
+  background: rgba(60, 56, 53, 0.2);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -139,15 +136,17 @@ body::after {
 @keyframes fade-out {
   0% {
     opacity: 1;
-    display: initial;
   }
   100% {
     opacity: 0;
-    display: none;
-    pointer-events: none;
+    pointer-events: none !important;
   }
 }
 body:not([logged_in=true]) .logged-in {
+  display: none !important;
+}
+
+.display-none {
   display: none !important;
 }
 
@@ -273,6 +272,14 @@ footer {
   flex: 1 1;
 }
 
+.flex-start {
+  justify-content: flex-start;
+}
+
+.flex-end {
+  justify-content: flex-end;
+}
+
 .flex-center {
   justify-content: center;
 }
@@ -371,175 +378,261 @@ form.login-form input {
   margin-bottom: 16px;
 }
 
-main {
+article.food-element {
+  height: var(--height);
   position: relative;
-  flex: 1;
-  width: 100vw;
-  overflow: hidden;
-}
-main article.food-element {
-  position: relative;
-  height: 22vh;
   margin-top: 4.5vh;
   margin-left: 5vw;
   margin-right: 5vw;
   box-sizing: border-box;
-  transition: margin-right 0.25s, opacity 0.25s, height 0.2s;
+  transition: margin-right 0.25s, opacity 0.25s, height 0.2s, scale 0.5s;
   z-index: 1;
 }
-main article.food-element.unfocused {
-  opacity: 0.5;
+@media (max-aspect-ratio: 5/3) {
+  article.food-element.focused {
+    scale: 1.1;
+  }
 }
-main article.food-element.large {
-  height: 75vh;
+article.food-element h1, article.food-element p {
+  transition: font-size 0.25s;
 }
-main article.food-element.large .food-details {
-  width: calc(100% - 2vw);
-  left: 2vw;
-  right: 0;
+article.food-element h1 {
+  font: calc(var(--height) * 0.0568181818) "DIN Pro";
+  font-weight: bold;
+  text-transform: uppercase;
 }
-main article.food-element.large .food-details .food-blank {
-  flex-basis: calc(22vh - 2vw);
+article.food-element p {
+  font: calc(var(--height) * 0.0327272727) ALSSchlange;
 }
-main article.food-element.large .food-details .food-details-additional {
-  height: 53vh;
-  opacity: 1;
-}
-main article.food-element .food-image {
+article.food-element p.food-discount {
+  font: calc(var(--height) * 0.0590909091) "DIN Pro";
+  font-weight: medium;
+  font-stretch: condensed;
+  margin: 0;
   position: absolute;
-  height: 22vh;
-  left: 11vh;
-  z-index: 2;
-  transform: translateX(-50%);
-  filter: brightness(120%);
-  background: white;
-  border-radius: 100%;
+  bottom: 0;
+  transform: translateY(calc(-1 * calc(var(--height) * 0.2272727273)));
+  padding-left: calc(var(--padding) * 0.5);
+  transition: transform 0.25s;
 }
-main article.food-element .food-image img {
+article.food-element p.food-discount .food-original-price {
+  text-decoration: line-through 0.2vh;
+}
+article.food-element p.food-price {
+  font: calc(var(--height) * 0.2272727273) "DIN Pro";
+  font-weight: bold;
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+}
+article.food-element p.food-price::after {
+  content: "kn";
+  font-size: 50.4%;
+}
+.food-image {
+  position: absolute;
+  height: 75vh;
+  width: 75vh;
+  z-index: 2;
+  filter: brightness(120%);
+  border-radius: 100%;
+  transform-origin: top left;
+  transform: scale(var(--scale));
+  transition: transform 0.25s;
+}
+.food-image img {
   height: 100%;
   border-radius: 100%;
   position: relative;
-  max-height: 22vh;
   z-index: 3;
 }
-main article.food-element .food-image::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 25%;
-  top: 25%;
-  bottom: 25%;
-  right: 25%;
-  border-top: 1vh solid transparent;
-  border-bottom: 1vh solid transparent;
-  border-left: 1vh solid #3c3835;
-  border-right: 1vh solid #3c3835;
-  border-radius: 100%;
-  z-index: 2;
-  animation: spin-pulse 4s infinite;
+.food-image img.not-loaded {
+  background: white;
+  opacity: 1;
+  z-index: 1;
 }
-main article.food-element .food-image::before {
+.food-image::after {
+  content: "";
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 50%;
+  width: 10%;
+  height: 10%;
+  border-radius: 100%;
+  background: #9e9c9a;
+  animation: load 2s infinite;
+  z-index: 2;
+}
+.food-image::before {
   /* Shadow */
   content: "";
   display: block;
   position: absolute;
   left: 0;
-  top: 37.5%;
+  top: calc(50% - 16px);
   width: 100%;
-  height: 12.5%;
+  height: 16px;
   z-index: 1;
   transform-origin: bottom;
   transform: rotate(45deg);
-  box-shadow: 0 2.75vh rgba(60, 56, 53, 0.375), 0 5.5vh rgba(60, 56, 53, 0.35), 0 8.25vh rgba(60, 56, 53, 0.325), 0 11vh rgba(60, 56, 53, 0.3), 0 13.75vh rgba(60, 56, 53, 0.275), 0 16.5vh rgba(60, 56, 53, 0.25), 0 19.25vh rgba(60, 56, 53, 0.225), 0 22vh rgba(60, 56, 53, 0.2), 0 24.75vh rgba(60, 56, 53, 0.175), 0 27.5vh rgba(60, 56, 53, 0.15), 0 30.25vh rgba(60, 56, 53, 0.125), 0 33vh rgba(60, 56, 53, 0.1), 0 35.75vh rgba(60, 56, 53, 0.075), 0 38.5vh rgba(60, 56, 53, 0.05), 0 41.25vh rgba(60, 56, 53, 0.025);
   opacity: 0.2;
+  box-shadow: 0 16px #3c3835,0 32px rgba(60, 56, 53, 0.96),0 48px rgba(60, 56, 53, 0.92),0 64px rgba(60, 56, 53, 0.88),0 80px rgba(60, 56, 53, 0.84),0 96px rgba(60, 56, 53, 0.8),0 112px rgba(60, 56, 53, 0.76),0 128px rgba(60, 56, 53, 0.72),0 144px rgba(60, 56, 53, 0.68),0 160px rgba(60, 56, 53, 0.64),0 176px rgba(60, 56, 53, 0.6),0 192px rgba(60, 56, 53, 0.56),0 208px rgba(60, 56, 53, 0.52),0 224px rgba(60, 56, 53, 0.48),0 240px rgba(60, 56, 53, 0.44),0 256px rgba(60, 56, 53, 0.4),0 272px rgba(60, 56, 53, 0.36),0 288px rgba(60, 56, 53, 0.32),0 304px rgba(60, 56, 53, 0.28),0 320px rgba(60, 56, 53, 0.24),0 336px rgba(60, 56, 53, 0.2),0 352px rgba(60, 56, 53, 0.16),0 368px rgba(60, 56, 53, 0.12),0 384px rgba(60, 56, 53, 0.08),0 400px rgba(60, 56, 53, 0.04);
 }
-main article.food-element .food-details {
+article.food-element:nth-child(2n+1) .food-image {
+  right: 0;
+  transform-origin: top right;
+  transform: scale(var(--scale));
+}
+article.food-element:nth-child(2n+1) .food-image::before {
+  transform: rotate(-45deg);
+}
+
+.food-details {
   display: flex;
   flex-flow: row-reverse nowrap;
   position: absolute;
-  left: 11vh;
-  width: calc(100% - 11vh);
+  left: var(--half-height);
+  width: calc(100% - var(--height) / 2);
   height: 100%;
   top: 0;
   background: white;
-  padding: 1vh;
+  padding: var(--padding);
   box-sizing: border-box;
   transition: width 0.2s, left 0.2s;
 }
-main article.food-element .food-details .food-summary {
+.food-details .food-summary {
   flex: 2;
   position: relative;
-  border-top: 0.3vh solid #3c3835;
+  border-top: calc(var(--height) * 0.0136363636) solid #3c3835;
   box-sizing: border-box;
-  height: 22vh;
+  height: calc(var(--height) - 2 * var(--padding));
+  transition: height 0.25s;
 }
-main article.food-element .food-details .food-blank {
+.food-details .food-blank {
   transition: flex-basis 0.2s;
-  height: 22vh;
-  flex: 0 0 11vh;
+  height: calc(var(--height));
+  flex: 0 0 var(--half-height);
 }
-main article.food-element .food-details .food-details-additional {
+.food-details .food-details-additional {
+  display: flex;
+  flex-flow: row;
   height: 0;
-  width: 66%;
+  width: 100%;
   opacity: 0;
   overflow: hidden;
   position: absolute;
   transition: height 0.1s, opacity 0.25s;
   top: 22vh;
-  left: 1vh;
+  left: var(--padding);
+  padding-top: 5.5vh;
+  padding-left: var(--padding);
+  padding-right: var(--padding);
+  box-sizing: border-box;
 }
-main article.food-element:nth-child(2n+1) .food-details {
+.food-details .food-details-additional .food-details-column-left {
+  flex: 3;
+  margin-right: var(--padding);
+}
+.food-details .food-details-additional .food-details-column-left > * {
+  border-top: 1px solid #3c3835;
+  margin-top: var(--padding);
+}
+.food-details .food-details-additional .food-details-column-right {
+  flex: 2;
+  margin-left: var(--padding);
+}
+.food-details .food-details-additional .food-nutrients-icons-icons {
+  display: flex;
+  flex-flow: row nowrap;
+  overflow: hidden;
+  padding-right: calc(var(--padding) * 2);
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div {
+  flex: 1;
+  margin: calc(var(--padding) * 0.1);
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div img {
+  width: 100%;
+}
+.food-details .food-details-additional .food-nutrients-table-table tr, .food-details .food-details-additional .food-nutrients-table-table td, .food-details .food-details-additional .food-nutrients-table-table th {
+  border: 0px solid transparent;
+  background: transparent;
+  padding: 0;
+}
+.food-details .food-details-additional .food-nutrients-table-table thead tr:first-child td, .food-details .food-details-additional .food-nutrients-table-table thead tr:first-child th, .food-details .food-details-additional .food-nutrients-table-table tfoot tr:first-child td, .food-details .food-details-additional .food-nutrients-table-table tfoot tr:first-child th {
+  border-top: var(--padding) solid #3c3835;
+}
+.food-details .food-details-additional .food-nutrients-table-table td, .food-details .food-details-additional .food-nutrients-table-table th {
+  border-top: 1px solid #3c3835;
+}
+.food-details .food-details-additional .food-nutrients-table-table tr > * {
+  text-align: right;
+}
+.food-details .food-details-additional .food-nutrients-table-table tr > *:first-child {
+  text-align: left;
+}
+.food-details .food-details-additional .food-nutrients-table-table tbody tr:first-child td, .food-details .food-details-additional .food-nutrients-table-table tbody tr:first-child th {
+  border-top: calc(0.5 * var(--padding)) solid #3c3835;
+}
+article.food-element:nth-child(2n+1) .food-details {
   left: 0;
   flex-flow: row nowrap;
 }
-main article.food-element:nth-child(2n+1) .food-image {
-  right: 11vh;
-  left: initial;
-  transform: translateX(50%);
+
+article.food-element.large {
+  height: 75vh;
 }
-main article.food-element:nth-child(2n+1) .food-image::before {
-  transform: rotate(-45deg);
-  /* transform: rotate(-45deg) scale(1, 4) translateY(50%); */
+article.food-element.large .food-image, article.food-element.large .food-blank, article.food-element.large .food-summary {
+  --height: 22vh;
+  --half-height: 11vh;
+  --scale: 0.2933333333;
 }
-main article.food-element:nth-child(2n+1).large .food-details {
-  left: 0;
+article.food-element.large .food-details {
+  width: calc(100% - 2vw);
+  left: 2vw;
+  right: 0;
 }
-main article.food-element h1 {
-  font: 1.25vh "DIN Pro";
-  font-weight: bold;
-  text-transform: uppercase;
+article.food-element.large .food-details .food-blank {
+  flex-basis: calc(22vh - 2vw);
 }
-main article.food-element p {
-  font: 0.72vh ALSSchlange;
+article.food-element.large .food-details .food-details-additional {
+  height: calc(53vh - var(--padding));
+  width: calc(100% - var(--padding) * 2);
+  opacity: 1;
 }
-main article.food-element p.food-discount {
-  font: 1.3vh "DIN Pro";
-  font-weight: medium;
-  font-stretch: condensed;
-  margin: 0;
-  position: absolute;
-  bottom: 7.5vh;
-  padding-left: 0.5vh;
-}
-main article.food-element p.food-discount .food-original-price {
-  text-decoration: line-through 0.2vh;
-}
-main article.food-element p.food-price {
-  font: 5vh "DIN Pro";
-  font-weight: bold;
-  margin: 0;
-  position: absolute;
-  bottom: 2vh;
-}
-main article.food-element p.food-price::after {
-  content: "kn";
-  font-size: 50.4%;
-}
-main article.food-element:first-child {
+article.food-element:first-child {
   margin-top: 4vh;
 }
-main article.food-element:last-child {
+article.food-element:last-child {
   margin-bottom: 8vh;
+}
+
+main {
+  position: relative;
+  flex: 1;
+  width: 100vw;
+  overflow: hidden;
+  --height: 35.25vh;
+  --scale: 0.47;
+  --half-height: 17.625vh;
+  --padding: 1.7625vh;
+}
+@media (max-aspect-ratio: 9/10) {
+  main {
+    --height: 22vh;
+    --scale: 0.2933333333;
+    --half-height: 11vh;
+    --padding: 1.1vh;
+  }
+}
+@media (min-aspect-ratio: 5/3) {
+  main {
+    --height: 75vh;
+    --scale: 1;
+    --half-height: 37.5vh;
+    --padding: 3.75vh;
+  }
 }
 main.has-scrollbar article.food-element {
   margin-right: 10vw;
