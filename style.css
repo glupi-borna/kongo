@@ -23,7 +23,7 @@
   font-family: "DIN Pro";
   src: url("fonts/DINPro-CondMedium.otf");
   font-stretch: condensed;
-  font-weight: medium;
+  font-weight: normal;
 }
 @keyframes fadeout {
   0% {
@@ -394,7 +394,7 @@ article.food-element {
   }
 }
 article.food-element h1, article.food-element p {
-  transition: font-size 0.25s;
+  transition: transform 0.25s, font-size 0.25s;
 }
 article.food-element h1 {
   font: calc(var(--height) * 0.0568181818) "DIN Pro";
@@ -403,6 +403,37 @@ article.food-element h1 {
 }
 article.food-element p {
   font: calc(var(--height) * 0.0327272727) ALSSchlange;
+}
+article.food-element p.food-code, article.food-element p.food-std, article.food-element p.food-ref {
+  position: absolute;
+  margin: 0;
+  bottom: 0;
+}
+article.food-element p.food-code.food-code, article.food-element p.food-std.food-code, article.food-element p.food-ref.food-code {
+  transform: translate(var(--padding), 50%);
+}
+article.food-element p.food-code.food-std, article.food-element p.food-std.food-std, article.food-element p.food-ref.food-std {
+  right: 0;
+  transform: translate(0, 50%);
+}
+article.food-element p.food-code.food-ref, article.food-element p.food-std.food-ref, article.food-element p.food-ref.food-ref {
+  font: calc(var(--height) * 0.0590909091) ALSSchlange;
+  font-weight: bold;
+  transform: translate(0, -calc(var(--padding)));
+  right: 0;
+}
+article.food-element p.food-ref {
+  position: absolute;
+  font-weight: bold;
+  margin: 0;
+  bottom: var(--padding);
+  right: 0;
+}
+article.food-element p.food-code {
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  transform: translate(var(--padding), 50%);
 }
 article.food-element p.food-discount {
   font: calc(var(--height) * 0.0590909091) "DIN Pro";
@@ -413,7 +444,6 @@ article.food-element p.food-discount {
   bottom: 0;
   transform: translateY(calc(-1 * calc(var(--height) * 0.2272727273)));
   padding-left: calc(var(--padding) * 0.5);
-  transition: transform 0.25s;
 }
 article.food-element p.food-discount .food-original-price {
   text-decoration: line-through 0.2vh;
@@ -548,12 +578,63 @@ article.food-element:nth-child(2n+1) .food-image::before {
   overflow: hidden;
   padding-right: calc(var(--padding) * 2);
 }
+.food-details .food-details-additional .food-nutrients-icons-icons p {
+  font-size: calc(7.5vw * var(--factor));
+}
 .food-details .food-details-additional .food-nutrients-icons-icons > div {
+  position: relative;
   flex: 1;
   margin: calc(var(--padding) * 0.1);
 }
 .food-details .food-details-additional .food-nutrients-icons-icons > div img {
   width: 100%;
+  max-height: 10vh;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-title, .food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-value, .food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-daily {
+  font-family: "DIN Pro", sans-serif, sans;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  max-width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-title {
+  font-weight: lighter;
+  left: 50%;
+  top: 10%;
+  transform: translate(-50%, 0);
+  font-stretch: condensed;
+  text-transform: uppercase;
+  text-align: center;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-value {
+  left: 50%;
+  top: calc(50% - 1em);
+  transform: translate(-50%, -50%);
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-value .nutrient-icon-value-value {
+  font-size: 200%;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-value .nutrient-icon-value-uom {
+  font-size: 125%;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-daily {
+  color: white;
+  left: 50%;
+  top: 73%;
+  transform: translate(-50%, -50%);
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-daily .nutrient-icon-daily-value {
+  font-size: 200%;
+}
+.food-details .food-details-additional .food-nutrients-icons-icons > div .nutrient-icon-daily .nutrient-icon-daily-uom {
+  font-size: 125%;
+}
+.food-details .food-details-additional .food-nutrients-table-table {
+  font-size: calc(var(--height) * 0.0327272727);
 }
 .food-details .food-details-additional .food-nutrients-table-table tr, .food-details .food-details-additional .food-nutrients-table-table td, .food-details .food-details-additional .food-nutrients-table-table th {
   border: 0px solid transparent;
@@ -565,6 +646,12 @@ article.food-element:nth-child(2n+1) .food-image::before {
 }
 .food-details .food-details-additional .food-nutrients-table-table td, .food-details .food-details-additional .food-nutrients-table-table th {
   border-top: 1px solid #3c3835;
+}
+.food-details .food-details-additional .food-nutrients-table-table td.subnutrient, .food-details .food-details-additional .food-nutrients-table-table th.subnutrient {
+  padding-left: 3ch;
+}
+.food-details .food-details-additional .food-nutrients-table-table td.align-right, .food-details .food-details-additional .food-nutrients-table-table th.align-right {
+  text-align: right !important;
 }
 .food-details .food-details-additional .food-nutrients-table-table tr > * {
   text-align: right;

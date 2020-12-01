@@ -67,7 +67,7 @@ $invlarge: 1 / 75;
 	font-family: "DIN Pro";
 	src: url("fonts/DINPro-CondMedium.otf");
 	font-stretch: condensed;
-	font-weight: medium;
+	font-weight: normal;
 }
 
 @keyframes fadeout {
@@ -483,14 +483,10 @@ article.food-element {
 	$bias: 1;
 
 	@media (max-aspect-ratio: 5/3) {
-		&.focused {
-			scale: 1.1;
-		}
+		&.focused { scale: 1.1; }
 	}
 
-	h1, p {
-		transition: font-size 0.25s;
-	}
+	h1, p { transition: transform 0.25s, font-size 0.25s; }
 
 	h1 {
 		font: $fontsize-1_25 "DIN Pro";
@@ -498,8 +494,41 @@ article.food-element {
 		text-transform: uppercase;
 	}
 
-	p {
-		font: $fontsize-0_72 ALSSchlange;
+	p { font: $fontsize-0_72 ALSSchlange; }
+
+	p.food-code, p.food-std, p.food-ref {
+		position: absolute;
+		margin: 0;
+		bottom: 0;
+
+		&.food-code {
+			transform: translate(var(--padding), 50%);
+		}
+		&.food-std {
+			right: 0;
+			transform: translate(0, 50%);
+		}
+		&.food-ref {
+			font: $fontsize-1_3 ALSSchlange;
+			font-weight: bold;
+			transform: translate(0, - calc(var(--padding)));
+			right: 0;
+		}
+	}
+
+	p.food-ref {
+		position: absolute;
+		font-weight: bold;
+		margin: 0;
+		bottom: var(--padding);
+		right: 0;
+	}
+
+	p.food-code {
+		position: absolute;
+		bottom: 0;
+		margin: 0;
+		transform: translate(var(--padding), 50%);
 	}
 
 	p.food-discount {
@@ -511,7 +540,6 @@ article.food-element {
 		bottom: 0;
 		transform: translateY(calc(-1 * #{$fontsize-5}));
 		padding-left: calc(var(--padding) * 0.5);
-		transition: transform 0.25s;
 
 		.food-original-price {
 			text-decoration: line-through 0.2vh;
@@ -650,17 +678,76 @@ article.food-element {
 				overflow: hidden;
 				padding-right: calc(var(--padding) * 2);
 
+				p {
+					font-size: calc(7.5vw * var(--factor));
+				}
+
 				> div {
+					position: relative;
 					flex: 1;
 					margin: calc(var(--padding) * 0.1);
 
 					img {
 						width: 100%;
+						max-height: 10vh;
+					}
+
+					.nutrient-icon-title, .nutrient-icon-value, .nutrient-icon-daily {
+						font-family: "DIN Pro", sans-serif, sans;
+						position: absolute;
+						left: 0;
+						top: 0;
+						margin: 0;
+						max-width: 80%;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+
+					.nutrient-icon-title {
+						font-weight: lighter;
+						left: 50%;
+						top: 10%;
+						transform: translate(-50%, 0);
+						font-stretch: condensed;
+						text-transform: uppercase;
+						text-align: center;
+					}
+
+					.nutrient-icon-value {
+						left: 50%;
+						top: calc(50% - 1em);
+						transform: translate(-50%, -50%);
+
+						.nutrient-icon-value-value {
+							font-size: 200%;
+						}
+
+						.nutrient-icon-value-uom {
+							font-size: 125%;
+						}
+					}
+
+					.nutrient-icon-daily {
+						color: white;
+						left: 50%;
+						top: 73%;
+						transform: translate(-50%, -50%);
+
+						.nutrient-icon-daily-value {
+							font-size: 200%;
+						}
+
+						.nutrient-icon-daily-uom {
+							font-size: 125%;
+						}
 					}
 				}
 			}
 
 			.food-nutrients-table-table {
+				font-size: $fontsize-0_72;
+
 				tr, td, th {
 					border: 0px solid transparent;
 					background: transparent;
@@ -677,6 +764,14 @@ article.food-element {
 
 				td, th {
 					border-top: 1px solid $primary;
+
+					&.subnutrient {
+						padding-left: 3ch;
+					}
+
+					&.align-right {
+						text-align: right !important;
+					}
 				}
 
 				tr > * {

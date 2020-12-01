@@ -6,6 +6,8 @@ function food_element(food_item) {
 	const food_title = el("h1", "food-title", text(food_item.itemName));
 	const food_description = el("p", "food-description", text(food_item.itemDescription || ""));
 
+	console.log(food_item);
+
 	let price = food_item.itemPrice;
 	let discount_price = food_item.itemDiscountPrice;
 	const percentage = Math.round(100 * (price - discount_price) / price);
@@ -19,59 +21,124 @@ function food_element(food_item) {
 		food_price = el("p", "food-price", text(discount_price.toFixed(2)));
 		food_discount = el(
 			"p", "food-discount",
-			text("("), food_original,
-			el("span", "food-original-price-trailer", text("kn ")),
-			food_percentage, text(")"));
+			text("("),
+				food_original,
+				el("span", "food-original-price-trailer", text("kn ")),
+				food_percentage,
+			text(")"));
 	} else {
 		food_price = el("p", "food-price", text(price.toFixed(2)));
+	}
+
+	const food_ref = el("p", "food-ref", text(food_item.itemRefUom));
+
+	let food_std = null;
+	if (food_item.itemUom && food_item.itemUom != "KO") {
+		let food_std_uom = text("1" + food_item.itemUom.toLowerCase() + " ");
+		let food_std_price = text(food_item.itemRefPrice.toFixed(2) + "kn");
+		food_std = el("p", "food-std", food_std_uom, food_std_price);
 	}
 
 	const food_summary = el(
 		"div", "food-summary",
 		food_title, food_description,
-		food_discount, food_price);
-
-	const food_nutrients_icons = el(
-		"div", "food-nutrients-icons",
-		el("h1", "food-nutrients-icons-title", text("Nutritivne vrijednosti")),
-		el("div", "food-nutrients-icons-icons",
-			...[0,0,0,0,0,0].map(_=>el("div", "", image("graphics/nutri-logo.svg"))))
-	);
+		food_discount,
+		food_price,
+		food_ref,
+		food_std,
+		el("p", "food-code", text("šifra: " + food_item.assetName)));
 
 	const food_declaration = el(
 		"div", "food-declaration",
 		el("h1", "food-declaration-title", text("Opis proizvoda")),
 		el("p", "food-declaration-text", text(food_item.itemDeclaration)));
 
-	const td = function td(value) {
-		return el("td", "", text(value));
+	const nutrition = JSON.parse(food_item.itemNutritionFacts);
+
+	const row = (...els) => el("tr", "", ...els);
+	const td = (val, cls="") => el("td", cls, text(val));
+	const th = (val, cls="") => el("th", cls, text(val));
+
+	let thead = el("thead", "");
+	let tbody = el("tbody", "");
+	let tfoot = el("tfoot", "");
+
+	let thead_desc = th("% Dnevna Vrijednost *", "align-right");
+	thead_desc.colSpan = 4;
+	thead.append(row(thead_desc));
+
+	for (let nutrient of nutrition.calories) {
+		thead.append(row(
+			th(nutrient.name),
+			td(nutrient.value + nutrient.uom),
+			td(String.fromCharCode(160).repeat(50)),
+			td(nutrient.daily_value + "%")
+		));
 	}
 
-	const th = function th(value) {
-		return el("th", "", text(value));
+	for (let nutrient of nutrition.nutrients) {
+		tbody.append(row(
+			th(nutrient.name),
+			td(nutrient.value + nutrient.uom),
+			td(String.fromCharCode(160).repeat(50)),
+			td(nutrient.daily_value + "%")
+		));
+
+		if (nutrient.sub_nutrients) {
+			for (let subnutrient of nutrient.sub_nutrients){
+				tbody.append(row(
+					td(subnutrient.name, "subnutrient"),
+					td(subnutrient.value + subnutrient.uom),
+					td(String.fromCharCode(160).repeat(30)),
+					td(subnutrient.daily_value + "%")
+				));
+			}
+		}
 	}
 
-	const tr = function tr(label_fn, label_text, val_fn, val_text) {
-		return el("tr", "", label_fn(label_text), val_fn(val_text));
-	}
+	let tfoot_desc = td("* Preporučeni unos za prosječnu odraslu osobu (8400 kJ / 2000 kcal)", "align-right");
+	tfoot_desc.colSpan = 4;
+	tbody.append(row(tfoot_desc));
 
-	const rows = function rows(num, label_fn, label_text, val_fn, val_text) {
-		return new Array(num).fill(0).map(_=>tr(label_fn, label_text, val_fn, val_text));
-	}
+	let table = el("table", "food-nutrients-table-table", thead, tbody, tfoot);
 
 	const food_nutrients_table = el(
 		"div", "food-nutrients-table",
 		el("h1", "food-nutrients-table-title", text("Nutritivne vrijednosti")),
-		el("table", "food-nutrients-table-table",
-			el("thead", "",
-				...rows(1, th, "Lorem ipsum", td, ""),
-				...rows(2, th, "Vrijednost", td, "20g")),
-			el("tbody", "",
-				...rows(10, th, "Vrijednost", td, "20g")),
-			el("tfoot", "",
-				...rows(2, th, "Vitamin A", td, "2%"))
+		table
+	);
+
+	let subnutrients = nutrition.nutrients.flatMap(n=>n.sub_nutrients);
+	let left_nutrients = [
+		...nutrition.calories.filter(c => c.side == "left" || c.side == "both"),
+		...nutrition.nutrients.filter(n => n.side == "left" || n.side == "both"),
+		...subnutrients.filter(n => n.side == "left" || n.side == "both")
+	];
+
+	const food_nutrients_icons = el(
+		"div", "food-nutrients-icons",
+		el("h1", "food-nutrients-icons-title", text("Nutritivne vrijednosti")),
+		el("div", "food-nutrients-icons-icons",
+			...left_nutrients.map(
+				nutrient => {
+					return el(
+						"div", "",
+						el("p", "nutrient-icon-title", text(nutrient.name)),
+						el("p", "nutrient-icon-value",
+							el("span", "nutrient-icon-value-value", text(nutrient.value)),
+							el("span", "nutrient-icon-value-uom", text(nutrient.uom))
+						),
+						el("p", "nutrient-icon-daily",
+							el("span", "nutrient-icon-daily-value", text(nutrient.daily_value)),
+							el("span", "nutrient-icon-daily-uom", text("%"))
+						),
+						image("graphics/nutri-logo.svg"));
+				}
+			)
 		)
 	);
+
+	food_nutrients_icons.style.setProperty("--factor", 1 / Math.pow(left_nutrients.length + 1, 1));
 
 	const food_details_column_left = el(
 		"div", "food-details-column-left",
@@ -245,7 +312,7 @@ function scrollable(element) {
 // 3. Admin - sve + conf ekrana
 
 window.settings = {
-	rotate: true,
+	rotate: false,
 	rotate_expand: false,
 	rotate_interval: 5,
 	rotate_index: 0,
