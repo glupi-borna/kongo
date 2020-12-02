@@ -1,1 +1,1 @@
-parallel "util/localserver" "sass --watch style.scss:style.css"
+parallel "util/localserver" "sass --watch src/style.scss:src/style.css"

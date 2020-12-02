@@ -190,7 +190,7 @@ function fake_item() {
 		itemNutritionFacts: null,
 		itemFooter: null,
 		assetName: "Slika",
-		assetUrl: "graphics/plate.png",
+		assetUrl: "graphics/plate.jpeg",
 		assetSize: 123,
 		assetWidth: 100,
 		assetHeight: 100,
