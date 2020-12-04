@@ -17,6 +17,16 @@ api.post = function post(route, body) {
 	})
 }
 
+api.patch = function patch(route, body) {
+	return fetch(route, {
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json;charset=utf-8"
+		},
+		body: JSON.stringify(body)
+	})
+}
+
 api.get = function get(route, body) {
 	return fetch(route, {
 		method: "POST",
@@ -79,5 +89,13 @@ api.screens.one = async function one(id) {
 
 api.screens.active = async function active(location_id) {
 	let response = await fetch(api.url + "/activeScreen/" + location_id);
+	return await response.json();
+}
+
+
+api.screenDetails = {};
+
+api.screenDetails.modify = async function modify(screenDetail) {
+	let response = await api.patch(api.url + "/screenDetail", screenDetail);
 	return await response.json();
 }

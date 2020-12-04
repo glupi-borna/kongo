@@ -114,6 +114,12 @@ function edit_element(data) {
 				value_field = "valueAsNumber";
 				val = Number(val);
 				break;
+			case 'boolean':
+				element.type = "checkbox";
+				element.size = 1;
+				value_field = "checked";
+				val = Boolean(val);
+				break;
 			default:
 				element.type = "text";
 				element.size = options.cols || 30;
@@ -224,6 +230,9 @@ function edit_element(data) {
 		type?: string;
 		// Used to force a type specific type.
 
+		diff_transform?: (val) => any;
+		// Used to transform values after changes have been detected in diff.
+
 		editable?: boolean;
 		// Used to override the table setting.
 
@@ -257,22 +266,45 @@ function table(data_array, options) {
 
 	let t = el("table");
 	t.changed = new Signal({type: "boolean", nullable: false, initial: false});
-	t.diff = () => {
+
+	t.diff = (whole_object=false) => {
 		let diffs = [];
 		for (let row of body_rows) {
-			let diff = diff_objects(row.original_data, row.current_data);
+			let old_data = row.original_data;
+			let new_data = {...row.current_data};
 
+			for (let column in new_data) {
+				if (columns_options[column] && columns_options[column].diff_transform) {
+					new_data[column] = columns_options[column].diff_transform(new_data[column]);
+				}
+			}
+
+			let diff = diff_objects(old_data, new_data);
 			if (diff) {
+				if (whole_object) {
+					diff = new_data;
+				}
+
 				if (options.id_columns) {
 					for (let column of options.id_columns) {
-						diff[column] = row.original_data[column];
+						diff[column] = new_data[column];
 					}
 				}
+
 				diffs.push(diff);
 			}
 		}
+
 		return diffs;
 	}
+
+	t.current_data = () => {
+		let data = [];
+		for (let row of body_rows) {
+			data.push(row.current_data);
+		}
+		return data;
+	};
 
 	if (headers === undefined || headers.length === 0) {
 		let keys = new Set();

@@ -43,6 +43,7 @@ function init_articles() {
 	let articles = q('#articles');
 
 	let display_names = {
+		visible: "Vidljivo",
 		itemOrder: "Redni broj",
 		assetUrl: "Slika",
 		itemName: "Artikl",
@@ -51,14 +52,14 @@ function init_articles() {
 		itemDiscountPrice: "Promo cijena",
 		itemDescription: "Opis",
 		itemDeclaration: "Deklaracija",
-		itemUom: "Mjerna jedinica"
+		itemUom: "Mjerna jedinica",
 	};
 
 	articles.addEventListener("shown", async (e) => {
 		let title = q("#title");
-		title.innerText = "Artikli";
 
 		let loc_id = e.detail.locationId;
+		title.innerText = "Artikli na lokaciji " + e.detail.name;
 
 		let data_table = Elements.table(
 			await api.screens.active(loc_id),
@@ -68,7 +69,9 @@ function init_articles() {
 				halign: 'center',
 				actions: [{
 					label: "Save",
-					action: (table) => console.log(table.diff()),
+					action: (table) => table.diff(false).forEach(screenDetail => {
+						api.screenDetails.modify(screenDetail);
+					}),
 					init: (table, action, button) => {
 						table.changed.subscribe((val) => {
 							button.classList.toggle("display-none", !val);
@@ -87,14 +90,18 @@ function init_articles() {
 					}
 				}],
 				headers_display: display_names,
-				id_columns: ["screenDetailId", "screenId", "itemAssetId"],
+				id_columns: ["screenDetailId", "screenId", "itemAssetId", "itemOrder", "visible"],
 				column_options: {
 					assetUrl: {
 						type: "image",
 						url_prefix: api.root,
 						editable: false
 					},
-					itemDescription: {editable: true, expandable: true}
+					visible: {
+						type: "boolean",
+						editable: true,
+						diff_transform: Number
+					}
 				}
 			}
 		);
@@ -127,7 +134,7 @@ function init_locations() {
 				editable: false,
 				valign: 'middle',
 				halign: 'center',
-				row_click: (row) => show("articles", { locationId: row.locationId }),
+				row_click: (row) => show("articles", row),
 				headers_display: display_names,
 				column_options: {
 					"": {

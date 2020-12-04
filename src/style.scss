@@ -520,6 +520,31 @@ input, textarea {
 	}
 }
 
+input[type="checkbox"] {
+	display: block;
+	position: relative;
+	appearance: none;
+	background: white;
+	width: 16px !important;
+	height: 16px !important;
+	border: 2px solid $primary;
+	cursor: pointer;
+
+	&.changed {
+		background: scale-color($primary, $saturation: 80%, $lightness: 80%);
+	}
+
+	&:checked::after {
+		content: "✔";
+		color: $primary;
+		display: block;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
 textarea {
 	padding: 4px;
 }

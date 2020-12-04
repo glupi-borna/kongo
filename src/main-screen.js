@@ -354,6 +354,10 @@ async function kongo() {
 	// }
 	let count = 0;
 	for (let item of await api.screens.active(params.location || 1)) {
+		if (!item.visible) {
+			continue;
+		}
+
 		main.append(food_element(item));
 		count++;
 	}
