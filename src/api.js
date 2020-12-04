@@ -1,6 +1,10 @@
 const api = {}
 window.api = api;
-api.root = "http://knz-app-t.konzum.hr:8080";
+if (location.host.startsWith("localhost")) {
+	api.root = "http://knz-app-t.konzum.hr:8080";
+} else {
+	api.root = location.host;
+}
 api.url = api.root + "/kongo-0.0.1/api/v1";
 
 api.post = function post(route, body) {
@@ -11,6 +15,22 @@ api.post = function post(route, body) {
 		},
 		body: JSON.stringify(body)
 	})
+}
+
+api.get = function get(route, body) {
+	return fetch(route, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json;charset=utf-8"
+		},
+		body: JSON.stringify(body)
+	})
+}
+
+
+api.log_in = async function log_in(username, password) {
+	let response = await api.get(api.url + "/checkUser", { username, password });
+	return await response.json();
 }
 
 

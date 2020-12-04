@@ -137,18 +137,26 @@ class Signal {
 	}
 }
 
-function mouse_listen() {
+function mouse_listen(delay=500, mouse_side_cls=false) {
+	let last_update = performance.now();
+
 	const update_mouse = (ev) => {
 		mouse.x = ev.clientX;
 		mouse.y = ev.clientY;
 		mouse.left = ev.buttons & 1;
 
-		document.body.classList.toggle("mouse-left",   mouse.x < window.innerWidth * 0.5);
-		document.body.classList.toggle("mouse-right",  mouse.x >= window.innerWidth * 0.5);
-		document.body.classList.toggle("mouse-top",    mouse.y < window.innerHeight * 0.5);
-		document.body.classList.toggle("mouse-bottom", mouse.y >= window.innerHeight * 0.5);
-		document.body.style.setProperty("--mouse-x", mouse.x / window.innerWidth);
-		document.body.style.setProperty("--mouse-y", mouse.y / window.innerHeight);
+		if (mouse_side_cls) {
+			document.body.classList.toggle("mouse-left",   mouse.x < window.innerWidth * 0.5);
+			document.body.classList.toggle("mouse-right",  mouse.x >= window.innerWidth * 0.5);
+			document.body.classList.toggle("mouse-top",    mouse.y < window.innerHeight * 0.5);
+			document.body.classList.toggle("mouse-bottom", mouse.y >= window.innerHeight * 0.5);
+		}
+
+		if (performance.now() - last_update > delay) {
+			document.body.style.setProperty("--mouse-x", mouse.x / window.innerWidth);
+			document.body.style.setProperty("--mouse-y", mouse.y / window.innerHeight);
+			last_update = performance.now();
+		}
 	};
 
 	document.body.addEventListener('mousemove', update_mouse);
@@ -348,4 +356,48 @@ function diff_objects(obj1, obj2) {
 	}
 
 	return new_obj;
+}
+
+function get_url_search_params() {
+	let params_str = location.search.substring(1);
+	let params_pairs = params_str.split(";");
+	let params = {};
+
+	for (let param of params_pairs) {
+		let [key, value] = param.split("=").map(s=>(s||"").trim());
+		params[key] = value;
+	}
+	return params;
+}
+
+function all_children(root, include_root=true) {
+	let els = [root];
+	for (let child of root.children) {
+		els.push(...all_children(child, false))
+	}
+	return els;
+}
+
+function bench_compare(fns, repeats=100000) {
+	let results = new Map();
+	for (let fn of fns) {
+		let t1 = performance.now();
+
+		for (let i = 0; i<repeats; i++) {
+			fn();
+		}
+
+		results.set(fn, performance.now() - t1);
+	}
+	return results;
+}
+
+function bench(fn, repeats=100000) {
+	let t1 = performance.now();
+
+	for (let i = 0; i<repeats; i++) {
+		fn();
+	}
+
+	return performance.now() - t1;
 }

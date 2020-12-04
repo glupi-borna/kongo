@@ -6,8 +6,6 @@ function food_element(food_item) {
 	const food_title = el("h1", "food-title", text(food_item.itemName));
 	const food_description = el("p", "food-description", text(food_item.itemDescription || ""));
 
-	console.log(food_item);
-
 	let price = food_item.itemPrice;
 	let discount_price = food_item.itemDiscountPrice;
 	const percentage = Math.round(100 * (price - discount_price) / price);
@@ -34,7 +32,7 @@ function food_element(food_item) {
 
 	let food_std = null;
 	if (food_item.itemUom && food_item.itemUom != "KO") {
-		let food_std_uom = text("1" + food_item.itemUom.toLowerCase() + " ");
+		let food_std_uom = text("1" + food_item.itemUom.toLowerCase() + "=");
 		let food_std_price = text(food_item.itemRefPrice.toFixed(2) + "kn");
 		food_std = el("p", "food-std", food_std_uom, food_std_price);
 	}
@@ -46,7 +44,7 @@ function food_element(food_item) {
 		food_price,
 		food_ref,
 		food_std,
-		el("p", "food-code", text("šifra: " + food_item.assetName)));
+		el("p", "food-code", text("šifra: " + String(food_item.itemId).padStart(7, "0"))));
 
 	const food_declaration = el(
 		"div", "food-declaration",
@@ -214,6 +212,10 @@ function scrollable(element) {
 	};
 
 	nub.update_y = () => {
+		if (!settings.show_scrollbar) {
+			return;
+		}
+
 		const scroll_offset = container.scrollTop / container.scrollHeight;
 
 		nub.style.setProperty(
@@ -312,7 +314,7 @@ function scrollable(element) {
 // 3. Admin - sve + conf ekrana
 
 window.settings = {
-	rotate: false,
+	rotate: true,
 	rotate_expand: false,
 	rotate_interval: 5,
 	rotate_index: 0,
@@ -324,7 +326,7 @@ window.settings = {
 	// an amount of seconds, and the rotation options are ignored,
 	// to allow the user to browse.
 	interactive: false,
-	interactive_seconds: 30,
+	interactive_seconds: 10,
 	interactive_id: null
 };
 
@@ -345,13 +347,17 @@ async function kongo() {
 	wsreload();
 	mouse_listen();
 	const main = scrollable(document.querySelector("main"));
+	const params = get_url_search_params();
 
 	// for (let i = 0; i < 20; i++) {
 		// main.append(food_element(fake_item()));
 	// }
-	for (let item of await api.screens.active(1)) {
+	let count = 0;
+	for (let item of await api.screens.active(params.location || 1)) {
 		main.append(food_element(item));
+		count++;
 	}
+	settings.rotate_index = Math.floor(Math.random() * count);
 
 	main.update_scroll();
 

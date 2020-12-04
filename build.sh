@@ -1,1 +1,1 @@
-jar -cvf frontend.war src/*
+cd src ; jar -cvf ../frontend.war * ; cd ..

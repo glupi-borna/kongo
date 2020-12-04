@@ -1,18 +1,3 @@
-const backend_url = 'http://knz-app-t.konzum.hr:8080';
-const data_url = '/kongo-0.0.1/api/v1/activeScreen';
-
-async function log_in(username, password) {
-	return new Promise((res, rej) => {
-		setTimeout(() => {
-			if (username === 'borna.lang' && password === 'pass') {
-				res(true);
-			} else {
-				res(true);
-			}
-		}, 500);
-	});
-}
-
 function log_out() {
 	set_global("logged_in", false);
 	show("login");
@@ -30,8 +15,9 @@ async function login_submit(event) {
 	let success = false;
 
 	try {
-		success = await log_in(data.username, data.password);
-	} catch {
+		success = await api.log_in(data.username, data.password);
+	} catch(err) {
+		console.error(err);
 		error = true;
 	}
 
@@ -72,10 +58,12 @@ function init_articles() {
 		let title = q("#title");
 		title.innerText = "Artikli";
 
+		let loc_id = e.detail.locationId;
+
 		let data_table = Elements.table(
-			await api.screens.active(e.detail.locationId),
+			await api.screens.active(loc_id),
 			{
-				editable: true,
+				editable: false,
 				valign: 'middle',
 				halign: 'center',
 				actions: [{
@@ -91,6 +79,12 @@ function init_articles() {
 					label: "Nazad",
 					action: (table) => show("locations"),
 					position: "top-left"
+				}, {
+					label: "Ekran",
+					position: "top-right",
+					action: (table) => {
+						location = location.origin + "?location=" + loc_id;
+					}
 				}],
 				headers_display: display_names,
 				id_columns: ["screenDetailId", "screenId", "itemAssetId"],
@@ -100,10 +94,7 @@ function init_articles() {
 						url_prefix: api.root,
 						editable: false
 					},
-					itemOrder: {editable: false},
-					itemDescription: {expandable: true},
-					itemDeclaration: {expandable: true},
-					itemUom: {cols: 4}
+					itemDescription: {editable: true, expandable: true}
 				}
 			}
 		);
@@ -122,7 +113,8 @@ function init_locations() {
 	let display_names = {
 		cin: "CIN",
 		name: "Lokacija",
-		address: "Adresa"
+		address: "Adresa",
+		"": ""
 	};
 
 	locations.addEventListener("shown", async () => {
@@ -136,7 +128,16 @@ function init_locations() {
 				valign: 'middle',
 				halign: 'center',
 				row_click: (row) => show("articles", { locationId: row.locationId }),
-				headers_display: display_names
+				headers_display: display_names,
+				column_options: {
+					"": {
+						type: "button",
+						label: "Ekran",
+						action: (row) => {
+							location = location.origin + "?location=" + row.current_data.locationId;
+						}
+					}
+				}
 			}
 		);
 
@@ -163,7 +164,7 @@ function init_login() {
 }
 
 window.onload = () => {
-	mouse_listen();
+	mouse_listen(16, true);
 	init_mainscreen();
 	init_login();
 	init_articles();

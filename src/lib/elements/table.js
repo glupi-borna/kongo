@@ -7,11 +7,11 @@ function hover_image(url) {
 	preview.className = "follow-mouse";
 
 	imgel.onmouseenter = () => {
-	        document.body.append(preview);
+		document.body.append(preview);
 	};
 
 	imgel.onmouseleave = () => {
-	        preview.remove();
+		preview.remove();
 	};
 
 	return imgel;
@@ -21,51 +21,83 @@ function hover_image(url) {
 function toggle_input_size(textinput) {
 	let new_el;
 
-	textinput.options.expanded = !Boolean(textinput.options.expanded);
+	textinput.data.options.expanded = !Boolean(textinput.data.options.expanded);
 
-	new_el = edit_element(
-		textinput.bound_object,
-		textinput.bound_field,
-		textinput.value_type,
-		textinput.table,
-		textinput.options);
+	new_el = edit_element(textinput.data);
 
 	new_el.original_value = textinput.original_value;
 	new_el.original_field_value = textinput.original_field_value;
 	new_el.trigger_input();
 	textinput.insertAdjacentElement("afterend", new_el);
 	textinput.remove();
+
+	setTimeout(() => {
+		new_el.scrollIntoView({
+			block: "center",
+			inline: "center",
+			behavior: "smooth"
+		});
+	}, 100);
 }
 
-function static_element(value, type, table, options={}) {
-	type = options.type || type;
+function static_element(data) {
+	type = data.options.type || data.type;
 
-	let el;
+	let element;
+	let value = data.object[data.field];
+	let label = data.options.label || data.header_display || data.field || "LABEL";
 
-	if (value === null || value === undefined) {
-		el = text(String("?"));
+	if (type === "button") {
+		element = el("button", "", text(label));
+		element.onclick = (e) => { data.options.action(data.row); e.stopPropagation(); };
+	} else if (value === null || value === undefined) {
+		element = el("div", "", text(String("?")));
 	} else {
 		switch (type) {
 			case "image":
-				el = hover_image((options.url_prefix || "") + String(value));
+				element = hover_image((data.options.url_prefix || "") + String(value));
 				break;
 			default:
-				el = text(String(value));
+				let str = String(value);
+
+				if (str.length > 80) {
+					element = el("details", "",
+						el("summary", "", text(label)),
+						text(str)
+					);
+					element.addEventListener("click", () => {
+						setTimeout(() => {
+							element.scrollIntoView({
+								block: "center",
+								inline: "center",
+								behavior: "smooth"
+							});
+						}, 100);
+					});
+				} else {
+					element = el("div", "", text(str));
+				}
+
 				break;
 		}
 	}
 
-	el.table = table;
-	return el;
+	element.table = table;
+	return element;
 }
 
-function edit_element(object, field, type, table, options={}) {
+function edit_element(data) {
+	const options = data.options;
+	const table = data.table;
+	const object = data.object;
+	const field = data.field;
+
 	let element;
 
 	let val = object[field];
 	let value_field = "value";
 
-	type = options.type || type;
+	type = options.type || data.type;
 
 	if (options.expanded) {
 		element = el("textarea");
@@ -94,26 +126,21 @@ function edit_element(object, field, type, table, options={}) {
 
 	let container = el("div", "flex-horizontal flex-inline flex-middle flex-center fit-content");
 
-	container.options = options;
-	container.bound_object = object;
-	container.bound_field = field;
+	container.data = data;
 	container.original_value = val;
-	container.value_type = type;
-	container.table = table;
+	container.original_field_value = object[field];
 	element[value_field] = val;
-
-	let original_field_value = object[field];
 
 	let reset_element = el("button", "icon", text("↺"));
 
 	reset_element.onclick = () => {
 		element[value_field] = container.original_value;
-		object[field] = original_field_value;
+		object[field] = container.original_field_value;
 		container.trigger_input();
 	}
 
 	element.addEventListener("input", () => {
-		object[field] = element[value_field];
+		data.object[data.field] = element[value_field];
 
 		let changed = element[value_field] !== container.original_value;
 		reset_element.disabled = !changed;
@@ -180,6 +207,12 @@ function edit_element(object, field, type, table, options={}) {
 		           "bottom-left" | "bottom-right" | "bottom-middle";
 	}
 
+	interface RowAction {
+		label: string;
+		action: (row) => void;
+		init?: (table, action, button) => void;
+	}
+
 	interface ColumnOptions {
 
 		cols?: number;
@@ -205,6 +238,14 @@ function edit_element(object, field, type, table, options={}) {
 
 		url_prefix?: string;
 		// Used with the "image" type. The image's url is prefixed with this string.
+
+		action?: TableAction {
+			label: string;
+			action: (table) => void;
+			init?: (table, action, button) => void;
+			position?: "top-left" | "top-right" | "top-middle" |
+			           "bottom-left" | "bottom-right" | "bottom-middle";
+		}
 	}
 	 */
 function table(data_array, options) {
@@ -233,16 +274,16 @@ function table(data_array, options) {
 		return diffs;
 	}
 
-	let table_data = new Map();
-
-	for (let item of data_array) {
-		for (let key in item) {
-			table_data.set(key, []);
-		}
-	}
-
 	if (headers === undefined || headers.length === 0) {
-		headers = Array.from(table_data.keys());
+		let keys = new Set();
+
+		for (let item of data_array) {
+			for (let key in item) {
+				keys.add(key);
+			}
+		}
+
+		headers = Array.from(keys);
 	}
 
 	let header_types = new Map();
@@ -297,12 +338,20 @@ function table(data_array, options) {
 				editable = false;
 			};
 
-			let contents;
-			if (editable) {
-				contents = edit_element(item, header, type, t, {...column_options});
-			} else {
-				contents = static_element(item[header], type, t, {...column_options});
-			}
+			let display_function = editable ? edit_element : static_element;
+
+			let display_data = {
+				value: item[header],
+				object: item,
+				field: header,
+				header_display: headers_display[header] || header,
+				type: type,
+				table: t,
+				row: tr,
+				options: {...column_options}
+			};
+
+			let contents = display_function(display_data);
 
 			cell.append(contents);
 			cell.setAttribute("value_type", type);
