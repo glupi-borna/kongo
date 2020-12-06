@@ -317,7 +317,7 @@ window.settings = {
 	rotate: true,
 	rotate_expand: false,
 	rotate_interval: 5,
-	rotate_index: 0,
+	rotate_index: 'random',
 	rotate_time: 0,
 	show_scrollbar: false,
 	allow_expand: true,
@@ -326,7 +326,7 @@ window.settings = {
 	// an amount of seconds, and the rotation options are ignored,
 	// to allow the user to browse.
 	interactive: false,
-	interactive_seconds: 10,
+	interactive_seconds: 30,
 	interactive_id: null
 };
 
@@ -344,7 +344,6 @@ function make_interactive() {
 }
 
 async function kongo() {
-	wsreload();
 	mouse_listen();
 	const main = scrollable(document.querySelector("main"));
 	const params = get_url_search_params();
@@ -361,7 +360,13 @@ async function kongo() {
 		main.append(food_element(item));
 		count++;
 	}
-	settings.rotate_index = Math.floor(Math.random() * count);
+
+	if (settings.rotate_index === 'random') {
+		settings.rotate_index = Math.floor(Math.random() * count);
+	}
+
+	let elements = Array.from(document.querySelectorAll("main article"));
+	elements[settings.rotate_index].scrollIntoView({block: "center", inline: "center"});
 
 	main.update_scroll();
 
