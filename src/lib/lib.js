@@ -165,6 +165,10 @@ function mouse_listen(delay=500, mouse_side_cls=false) {
 }
 
 function wsreload() {
+	if (!location.host.startsWith("localhost")) {
+		return;
+	}
+
 	const ws = new WebSocket("ws://localhost:8080");
 	ws.onmessage = (msg) => {
 		console.log("WS: ", msg.data);

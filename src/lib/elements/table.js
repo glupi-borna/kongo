@@ -257,7 +257,8 @@ function edit_element(data) {
 		}
 	}
 	 */
-function table(data_array, options) {
+function table(get_data, options) {
+
 	let headers_display = options.headers_display || {};
 	let headers = options.headers || Object.keys(headers_display);
 	let columns_options = options.column_options || {};
@@ -265,11 +266,16 @@ function table(data_array, options) {
 	let table_halign = options.halign || 'left';
 
 	let t = el("table");
+	let table_container = el("div", "flex-vertical flex-dynamic scrollable table-container", t);
+	t.container = table_container;
+
+	t.body_rows = [];
+
 	t.changed = new Signal({type: "boolean", nullable: false, initial: false});
 
 	t.diff = (whole_object=false) => {
 		let diffs = [];
-		for (let row of body_rows) {
+		for (let row of t.body_rows) {
 			let old_data = row.original_data;
 			let new_data = {...row.current_data};
 
@@ -300,142 +306,163 @@ function table(data_array, options) {
 
 	t.current_data = () => {
 		let data = [];
-		for (let row of body_rows) {
+		for (let row of t.body_rows) {
 			data.push(row.current_data);
 		}
 		return data;
 	};
 
-	if (headers === undefined || headers.length === 0) {
-		let keys = new Set();
+	t.load_data = async () => {
+		let data_array = await get_data();
 
-		for (let item of data_array) {
-			for (let key in item) {
-				keys.add(key);
+		if (headers === undefined || headers.length === 0) {
+			let keys = new Set();
+
+			for (let item of data_array) {
+				for (let key in item) {
+					keys.add(key);
+				}
 			}
+
+			headers = Array.from(keys);
 		}
 
-		headers = Array.from(keys);
-	}
+		let header_types = new Map();
 
-	let header_types = new Map();
-
-	for (let header of headers) {
-		let types = [];
-		for (let item of data_array) {
-			let type = typeof(item[header]);
-			if (["undefined", "object"].includes(type)) {
-				continue;
-			}
-			types.push(type);
-		}
-		header_types.set(header, array_mode(types));
-	}
-
-	let header_row = el("tr");
-	let header_cells = [];
-	for (let header of headers) {
-		let cell = el("th");
-		cell.append(text(headers_display[header] || header));
-		cell.setAttribute("value_type", header_types.get(header));
-		header_cells.push(cell);
-	}
-
-	header_row.append(...header_cells);
-
-	let body_rows = [];
-
-	for (let item of data_array) {
-		let tr = el("tr");
-		tr.original_data = {...item};
-		tr.current_data = item;
-
-		let cells = [];
 		for (let header of headers) {
-			let column_options = columns_options[header] || {};
-
-			let cell_valign = column_options.valign || table_valign;
-			let cell_halign = column_options.halign || table_halign;
-
-			let cell = el("td");
-			cell.original_value = item[header];
-			cell.style.setProperty("text-align", cell_halign);
-			cell.style.setProperty("vertical-align", cell_valign);
-			let type = header_types.get(header);
-
-			let editable = options.editable;
-			if (column_options.editable === true) {
-				editable = true;
-			} else if (column_options.editable === false) {
-				editable = false;
-			};
-
-			let display_function = editable ? edit_element : static_element;
-
-			let display_data = {
-				value: item[header],
-				object: item,
-				field: header,
-				header_display: headers_display[header] || header,
-				type: type,
-				table: t,
-				row: tr,
-				options: {...column_options}
-			};
-
-			let contents = display_function(display_data);
-
-			cell.append(contents);
-			cell.setAttribute("value_type", type);
-			cells.push(cell);
+			let types = [];
+			for (let item of data_array) {
+				let type = typeof(item[header]);
+				if (["undefined", "object"].includes(type)) {
+					continue;
+				}
+				types.push(type);
+			}
+			header_types.set(header, array_mode(types));
 		}
 
-		tr.append(...cells);
-
-		if (options.row_click) {
-			tr.classList.toggle("clickable", true);
-			tr.addEventListener("click", () => options.row_click(item));
+		let header_row = el("tr");
+		let header_cells = [];
+		for (let header of headers) {
+			let cell = el("th");
+			cell.append(text(headers_display[header] || header));
+			cell.setAttribute("value_type", header_types.get(header));
+			header_cells.push(cell);
 		}
 
-		body_rows.push(tr);
-	}
+		header_row.append(...header_cells);
 
-	let thead = el("thead");
-	let tbody = el("tbody");
+		t.body_rows = [];
 
-	thead.append(header_row);
-	tbody.append(...body_rows);
+		for (let item of data_array) {
+			let tr = el("tr");
+			tr.original_data = {...item};
+			tr.current_data = item;
 
-	t.append(thead, tbody);
+			let cells = [];
+			for (let header of headers) {
+				let column_options = columns_options[header] || {};
 
-	let actions = (options.actions || []);
-	actions.forEach(a => {
-		a.position = a.position || 'top-left';
-		a.table = t;
-	});
+				let cell_valign = column_options.valign || table_valign;
+				let cell_halign = column_options.halign || table_halign;
 
-	let top_left_table_actions = actions.filter(a => a.position === 'top-left').map(table_action);
-	let top_middle_table_actions = actions.filter(a => a.position === 'top-middle').map(table_action);
-	let top_right_table_actions = actions.filter(a => a.position === 'top-right').map(table_action);
+				let cell = el("td");
+				cell.original_value = item[header];
+				cell.style.setProperty("text-align", cell_halign);
+				cell.style.setProperty("vertical-align", cell_valign);
+				let type = header_types.get(header);
 
-	let bottom_left_table_actions = actions.filter(a => a.position === 'bottom-left').map(table_action);
-	let bottom_middle_table_actions = actions.filter(a => a.position === 'bottom-middle').map(table_action);
-	let bottom_right_table_actions = actions.filter(a => a.position === 'bottom-right').map(table_action);
+				let editable = options.editable;
+				if (column_options.editable === true) {
+					editable = true;
+				} else if (column_options.editable === false) {
+					editable = false;
+				};
 
-	let top_left = el("div", "flex-horizontal flex-dynamic flex-start", ...top_left_table_actions);
-	let top_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...top_middle_table_actions);
-	let top_right = el("div", "flex-horizontal flex-dynamic flex-end", ...top_right_table_actions);
+				let display_function = editable ? edit_element : static_element;
 
-	let bottom_left = el("div", "flex-horizontal flex-dynamic flex-start", ...bottom_left_table_actions);
-	let bottom_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...bottom_middle_table_actions);
-	let bottom_right = el("div", "flex-horizontal flex-dynamic flex-end", ...bottom_right_table_actions);
+				let display_data = {
+					value: item[header],
+					object: item,
+					field: header,
+					header_display: headers_display[header] || header,
+					type: type,
+					table: t,
+					row: tr,
+					options: {...column_options}
+				};
 
-	let top = el("div", "flex-horizontal flex-static", top_left, top_mid, top_right);
-	let bottom = el("div", "flex-horizontal flex-static", bottom_left, bottom_mid, bottom_right);
+				let contents = display_function(display_data);
 
-	let table_container = el("div", "flex-vertical flex-dynamic scrollable table-container", t);
+				cell.append(contents);
+				cell.setAttribute("value_type", type);
+				cells.push(cell);
+			}
 
-	return [top, table_container, bottom];
+			tr.append(...cells);
+
+			if (options.row_click) {
+				tr.classList.toggle("clickable", true);
+				tr.addEventListener("click", () => options.row_click(item));
+			}
+
+			t.body_rows.push(tr);
+		}
+
+		let thead = el("thead");
+		let tbody = el("tbody");
+
+		thead.append(header_row);
+		tbody.append(...t.body_rows);
+
+		remove_children(t);
+		t.append(thead, tbody);
+
+		let actions = (options.actions || []);
+		actions.forEach(a => {
+			a.position = a.position || 'top-left';
+			a.table = t;
+		});
+
+		let top_left_table_actions = actions.filter(a => a.position === 'top-left').map(table_action);
+		let top_middle_table_actions = actions.filter(a => a.position === 'top-middle').map(table_action);
+		let top_right_table_actions = actions.filter(a => a.position === 'top-right').map(table_action);
+
+		let bottom_left_table_actions = actions.filter(a => a.position === 'bottom-left').map(table_action);
+		let bottom_middle_table_actions = actions.filter(a => a.position === 'bottom-middle').map(table_action);
+		let bottom_right_table_actions = actions.filter(a => a.position === 'bottom-right').map(table_action);
+
+		let top_left = el("div", "flex-horizontal flex-dynamic flex-start", ...top_left_table_actions);
+		let top_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...top_middle_table_actions);
+		let top_right = el("div", "flex-horizontal flex-dynamic flex-end", ...top_right_table_actions);
+
+		let bottom_left = el("div", "flex-horizontal flex-dynamic flex-start", ...bottom_left_table_actions);
+		let bottom_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...bottom_middle_table_actions);
+		let bottom_right = el("div", "flex-horizontal flex-dynamic flex-end", ...bottom_right_table_actions);
+
+		let top = el("div", "flex-horizontal flex-static", top_left, top_mid, top_right);
+		let bottom = el("div", "flex-horizontal flex-static", bottom_left, bottom_mid, bottom_right);
+
+		if (t.top_actions) {
+			t.top_actions.remove();
+			t.top_actions = null;
+		}
+
+		if (t.bottom_actions) {
+			t.bottom_actions.remove();
+			t.bottom_actions = null;
+		}
+
+		t.top_actions = top;
+		t.bottom_actions = bottom;
+
+		table_container.insertAdjacentElement("beforebegin", t.top_actions);
+		table_container.insertAdjacentElement("afterend", t.bottom_actions);
+	};
+
+	t.load_data();
+
+	return table_container;
 }
 
 function table_action(action) {

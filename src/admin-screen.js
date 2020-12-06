@@ -11,32 +11,120 @@ async function login_submit(event) {
 	b.setCustomValidity('');
 	b.classList.toggle("disabled", true);
 
-	let error = false;
-	let success = false;
+	let error = null;
+	let user = null;
 
 	try {
-		success = await api.log_in(data.username, data.password);
+		user = await api.log_in(data.username, data.password);
 	} catch(err) {
-		console.error(err);
-		error = true;
+		error = err;
 	}
 
 	b.classList.toggle("disabled", false);
 
 	if (error) {
-		b.setCustomValidity("Error communicating with server.");
+		switch (error.status) {
+			case 401:
+			case 403:
+				b.setCustomValidity("Wrong username or password. Please try again.");
+				break;
+			default:
+				b.setCustomValidity("Error communicating with server.");
+				break;
+		}
+
 		b.reportValidity();
 		return;
 	}
 
-	if (!success) {
-		b.setCustomValidity("Wrong username or password. Please try again.");
-		b.reportValidity();
-		return;
-	}
+	window.user = user;
 
 	set_global("logged_in", true);
 	show("mainscreen");
+}
+
+function init_location_articles() {
+	let location_articles = q('#location_articles');
+
+	let display_names = {
+		visible: "Vidljivo",
+		itemOrder: "Redni broj",
+		assetUrl: "Slika",
+		itemName: "Artikl",
+		itemPrice: "Cijena",
+		itemDiscount: "Popust",
+		itemDiscountPrice: "Promo cijena",
+		itemDescription: "Opis",
+		itemDeclaration: "Deklaracija",
+		itemUom: "Mjerna jedinica",
+	};
+
+	location_articles.addEventListener("shown", async (e) => {
+		let title = q("#title");
+
+		let loc_id = e.detail.locationId;
+		title.innerText = "Artikli na lokaciji " + e.detail.name;
+
+		let data_table = Elements.table(
+			async () => await api.screens.active(loc_id),
+			{
+				editable: false,
+				valign: 'middle',
+				halign: 'center',
+				actions: [{
+					label: "Save",
+					action: async (table) => {
+						let changes = table.diff(false);
+
+						let promises = [];
+						for (let change of changes) {
+							promises.push(api.screenDetails.modify(change));
+						}
+
+						await Promise.all(promises);
+						table.load_data();
+					},
+					init: (table, action, button) => {
+						table.changed.subscribe((val) => {
+							button.classList.toggle("display-none", !val);
+						}, true);
+					},
+					position: "bottom-right"
+				}, {
+					label: "Nazad",
+					action: (table) => show("locations"),
+					position: "top-left"
+				}, {
+					label: "Ekran",
+					position: "top-right",
+					action: (table) => {
+						location = location.origin + "?location=" + loc_id;
+					}
+				}],
+				headers_display: display_names,
+				id_columns: ["screenDetailId", "screenId", "itemAssetId", "itemOrder", "visible"],
+				column_options: {
+					itemOrder: { editable: true },
+					assetUrl: {
+						type: "image",
+						url_prefix: api.root,
+						editable: false
+					},
+					visible: {
+						type: "boolean",
+						editable: true,
+						diff_transform: Number
+					}
+				}
+			}
+		);
+
+		location_articles.append(data_table);
+	});
+
+	location_articles.addEventListener("hidden", () => {
+		remove_children(location_articles);
+	});
 }
 
 function init_articles() {
@@ -62,16 +150,24 @@ function init_articles() {
 		title.innerText = "Artikli na lokaciji " + e.detail.name;
 
 		let data_table = Elements.table(
-			await api.screens.active(loc_id),
+			async () => await api.screens.active(loc_id),
 			{
 				editable: false,
 				valign: 'middle',
 				halign: 'center',
 				actions: [{
 					label: "Save",
-					action: (table) => table.diff(false).forEach(screenDetail => {
-						api.screenDetails.modify(screenDetail);
-					}),
+					action: async (table) => {
+						let changes = table.diff(false);
+
+						let promises = [];
+						for (let change of changes) {
+							promises.push(api.screenDetails.modify(change));
+						}
+
+						await Promise.all(promises);
+						table.load_data();
+					},
 					init: (table, action, button) => {
 						table.changed.subscribe((val) => {
 							button.classList.toggle("display-none", !val);
@@ -92,6 +188,7 @@ function init_articles() {
 				headers_display: display_names,
 				id_columns: ["screenDetailId", "screenId", "itemAssetId", "itemOrder", "visible"],
 				column_options: {
+					itemOrder: { editable: true },
 					assetUrl: {
 						type: "image",
 						url_prefix: api.root,
@@ -106,7 +203,7 @@ function init_articles() {
 			}
 		);
 
-		articles.append(...data_table);
+		articles.append(data_table);
 	});
 
 	articles.addEventListener("hidden", () => {
@@ -129,12 +226,12 @@ function init_locations() {
 		title.innerText = "Lokacije";
 
 		let data_table = Elements.table(
-			await api.locations.all(),
+			async () => await api.locations.all(),
 			{
 				editable: false,
 				valign: 'middle',
 				halign: 'center',
-				row_click: (row) => show("articles", row),
+				row_click: (row) => show("location_articles", row),
 				headers_display: display_names,
 				column_options: {
 					"": {
@@ -148,7 +245,7 @@ function init_locations() {
 			}
 		);
 
-		locations.append(...data_table);
+		locations.append(data_table);
 	});
 
 	locations.addEventListener("hidden", () => {
@@ -174,7 +271,7 @@ window.onload = () => {
 	mouse_listen(16, true);
 	init_mainscreen();
 	init_login();
-	init_articles();
+	init_location_articles();
 	init_locations();
-	show("mainscreen");
+	show("login");
 };

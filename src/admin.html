@@ -23,7 +23,7 @@
 	</header>
 	<main>
 		<form id="login" class="login-form" onsubmit="login_submit(event)">
-			<input placeholder="Username" name="username" type="username" required/>
+			<input placeholder="Username" name="username" type="text" autocomplete="username" required/>
 			<input placeholder="Password" name="password" type="password" required/>
 			<button type="submit" onclick="reset_validity(this)">Log in</button>
 		</form>
@@ -35,7 +35,7 @@
 					<div id="articles"
 						 class="flex-vertical flex-dynamic no-overflow">
 					</div>
-					<div id="screens"
+					<div id="location_articles"
 						 class="flex-vertical flex-dynamic no-overflow">
 					</div>
 					<div id="locations"
