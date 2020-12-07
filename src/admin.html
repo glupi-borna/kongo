@@ -27,7 +27,7 @@
 			<input placeholder="Password" name="password" type="password" required/>
 			<button type="submit" onclick="reset_validity(this)">Log in</button>
 		</form>
-		<section id="mainscreen" class="full">
+		<section id="mainscreen" class="full display-none">
 			<div class="card full flex-vertical">
 				<h1 id="title"
 					class="flex-static no-overflow"></h1>
@@ -40,6 +40,15 @@
 					</div>
 					<div id="locations"
 						 class="flex-vertical flex-dynamic no-overflow">
+					</div>
+					<div id="admin-dash"
+						 style="align-items: center"
+						 class="flex-vertical flex-dynamic no-overflow">
+						<div class="flex-dynamic"></div>
+						<button onclick="show('locations')">PREGLED LOKACIJA</button>
+						<div class="flex-dynamic"></div>
+						<button onclick="show('articles')">PREGLED ARTIKALA</button>
+						<div class="flex-dynamic"></div>
 					</div>
 				</div>
 			</div>

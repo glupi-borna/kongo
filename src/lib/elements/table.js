@@ -151,7 +151,7 @@ function edit_element(data) {
 		let changed = element[value_field] !== container.original_value;
 		reset_element.disabled = !changed;
 		element.classList.toggle("changed", changed);
-		table.changed.emit(changed);
+		table.changed.emit();
 	});
 
 	let size_element;
@@ -258,20 +258,22 @@ function edit_element(data) {
 	}
 	 */
 function table(get_data, options) {
-
-	let headers_display = options.headers_display || {};
-	let headers = options.headers || Object.keys(headers_display);
-	let columns_options = options.column_options || {};
-	let table_valign = options.valign || 'middle';
-	let table_halign = options.halign || 'left';
-
 	let t = el("table");
 	let table_container = el("div", "flex-vertical flex-dynamic scrollable table-container", t);
 	t.container = table_container;
 
 	t.body_rows = [];
 
-	t.changed = new Signal({type: "boolean", nullable: false, initial: false});
+	t.changed = new Signal({type: "undefined"});
+	t.has_changes = new Signal({type: "boolean", nullable: false, initial: false});
+	t.changed.subscribe(() => {
+		let old = t.has_changes.current_value;
+		let current = !!t.querySelector(".changed");
+
+		if (old !== current) {
+			t.has_changes.emit(current);
+		}
+	});
 
 	t.diff = (whole_object=false) => {
 		let diffs = [];
@@ -280,8 +282,8 @@ function table(get_data, options) {
 			let new_data = {...row.current_data};
 
 			for (let column in new_data) {
-				if (columns_options[column] && columns_options[column].diff_transform) {
-					new_data[column] = columns_options[column].diff_transform(new_data[column]);
+				if (options.column_options[column] && options.column_options[column].diff_transform) {
+					new_data[column] = options.column_options[column].diff_transform(new_data[column]);
 				}
 			}
 
@@ -292,7 +294,8 @@ function table(get_data, options) {
 				}
 
 				if (options.id_columns) {
-					for (let column of options.id_columns) {
+					let id_columns = function_unwrap(options.id_columns);
+					for (let column of id_columns) {
 						diff[column] = new_data[column];
 					}
 				}
@@ -314,6 +317,12 @@ function table(get_data, options) {
 
 	t.load_data = async () => {
 		let data_array = await get_data();
+
+		let headers_display = function_unwrap(options.headers_display || {});
+		let headers = function_unwrap(options.headers || Object.keys(headers_display));
+		let column_options = function_unwrap(options.column_options || {});
+		let table_valign = function_unwrap(options.valign || 'middle');
+		let table_halign = function_unwrap(options.halign || 'left');
 
 		if (headers === undefined || headers.length === 0) {
 			let keys = new Set();
@@ -361,10 +370,10 @@ function table(get_data, options) {
 
 			let cells = [];
 			for (let header of headers) {
-				let column_options = columns_options[header] || {};
+				let column_options = options.column_options[header] || {};
 
-				let cell_valign = column_options.valign || table_valign;
-				let cell_halign = column_options.halign || table_halign;
+				let cell_valign = function_unwrap(column_options.valign || table_valign);
+				let cell_halign = function_unwrap(column_options.halign || table_halign);
 
 				let cell = el("td");
 				cell.original_value = item[header];
@@ -372,12 +381,13 @@ function table(get_data, options) {
 				cell.style.setProperty("vertical-align", cell_valign);
 				let type = header_types.get(header);
 
-				let editable = options.editable;
-				if (column_options.editable === true) {
+				let editable = function_unwrap(options.editable);
+				let column_editable = function_unwrap(column_options.editable);
+				if (column_editable === true) {
 					editable = true;
-				} else if (column_options.editable === false) {
+				} else if (column_editable === false) {
 					editable = false;
-				};
+				}
 
 				let display_function = editable ? edit_element : static_element;
 
@@ -419,6 +429,8 @@ function table(get_data, options) {
 		t.append(thead, tbody);
 
 		let actions = (options.actions || []);
+		actions = actions.map(function_unwrap);
+		actions = actions.filter(Boolean);
 		actions.forEach(a => {
 			a.position = a.position || 'top-left';
 			a.table = t;

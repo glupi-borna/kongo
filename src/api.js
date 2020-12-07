@@ -127,3 +127,8 @@ api.items.all = async function all() {
 	let response = await fetch(api.url + "/items");
 	return await response.json();
 }
+
+api.items.modifyDesc = async function modifyDesc(itemId, data) {
+	let response = await api.patch(api.url + "/item/desc/" + itemId, data);
+	return true;
+}

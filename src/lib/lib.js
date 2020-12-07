@@ -137,6 +137,11 @@ class Signal {
 	}
 }
 
+function navigate_to(path) {
+	let app_root = location.href.split("/").slice(0,-1).join("/");
+	location = app_root + path;
+}
+
 function mouse_listen(delay=500, mouse_side_cls=false) {
 	let last_update = performance.now();
 
@@ -180,6 +185,14 @@ function wsreload() {
 }
 wsreload();
 
+
+function function_unwrap(arg) {
+	// Calls a function and returns the result if the passed argument is a function.
+	// Otherwise, returns the passed argument.
+	if (typeof (arg) === "function") { return arg() };
+	return arg;
+}
+
 function fake_item() {
 	return {
 		screenDetailId: 1,
@@ -222,37 +235,55 @@ function reset_validity(el) {
 	el.setCustomValidity('');
 }
 
-const show_stack = [];
+function pass() {
+	return pass;
+}
 
-function show(id, data, push_stack=true) {
-	if (push_stack) {
+function show(id, data, push_state=true) {
+	if (push_state) {
 		history.pushState([id, data], window.title);
 	}
 
 	let target = document.getElementById(id);
-	for (let child of target.parentElement.children) {
-		child.classList.toggle("fadeout", child!==target);
-		child.classList.toggle("fadein", child===target);
-		child.classList.toggle("display-none", child!==target);
 
-		let old = child.show_state;
-		let update = old != (child===target);
-		child.show_state = (child===target);
-
-		if (child === target) {
-			if (update) {
-				child.dispatchEvent(new CustomEvent("shown", {detail: data}));
-			}
-			child.classList.toggle("display-none", false);
-		} else {
-			if (update) {
-				child.dispatchEvent(new Event("hidden"));
-			}
-			setTimeout(() => {
-				child.classList.toggle("display-none", true);
-			});
+	if (target.navigation_condition) {
+		if (!target.navigation_condition(data)) {
+			console.log("not allowed to show ", id);
+			return show;
 		}
 	}
+
+	console.log("showing", id);
+
+	setTimeout(() => {
+		for (let child of target.parentElement.children) {
+			child.classList.toggle("fadeout", child!==target);
+			child.classList.toggle("fadein", child===target);
+			child.classList.toggle("display-none", child!==target);
+
+			let old = child.show_state;
+			let update = old != (child===target);
+			child.show_state = (child===target);
+
+			if (child === target) {
+				if (update) {
+					setTimeout(() => {
+						child.dispatchEvent(new CustomEvent("shown", {detail: data}));
+					});
+				}
+				child.classList.toggle("display-none", false);
+			} else {
+				setTimeout(() => {
+					if (update) {
+						child.dispatchEvent(new Event("hidden"));
+					}
+					child.classList.toggle("display-none", true);
+				});
+			}
+		}
+	});
+
+	return pass;
 }
 
 const globals = {};
