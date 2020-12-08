@@ -146,7 +146,7 @@ function init_articles() {
 		itemDiscountPrice: "Promo cijena",
 		itemDescription: "Opis",
 		itemDeclaration: "Deklaracija",
-		itemRefUom: "Mjerna jedinica",
+		refUom: "Mjerna jedinica",
 	};
 
 	articles.addEventListener("shown", async (e) => {
