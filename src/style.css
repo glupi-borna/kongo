@@ -101,6 +101,9 @@ table td[value_type=string] details summary {
   cursor: pointer;
   transition: opacity 0.1s;
 }
+table td[value_type=string] details summary::-webkit-details-marker {
+  display: none;
+}
 table td[value_type=string] details summary::before {
   content: "▶";
   position: absolute;
@@ -121,7 +124,7 @@ table td[value_type=string] details summary:active {
 table td[value_type=string] details[open] summary::before {
   content: "▼";
 }
-table tr:nth-child(2n) {
+table tr:nth-child(2n) td {
   background: #0001;
 }
 table tr.clickable {
@@ -155,7 +158,7 @@ body {
   align-items: center;
   font-family: ALSSchlange, serif;
 }
-body::after {
+body:not([nofadein])::after {
   /* Fadein */
   content: "";
   display: block;
@@ -202,6 +205,12 @@ body:not([logged_in=true]) .logged-in {
   display: none;
 }
 
+.fadein, .fadeout {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .fadein {
   animation: fade-in 0.25s forwards;
 }
@@ -219,7 +228,7 @@ body:not([logged_in=true]) .logged-in {
   padding: 8px;
   left: 0;
   top: 0;
-  animation: fade-in 0.25s forwards;
+  z-index: 100;
   transition: transform 0.1s;
 }
 .mouse-left.mouse-top .follow-mouse {
@@ -238,6 +247,7 @@ body:not([logged_in=true]) .logged-in {
 img {
   opacity: 1;
   transition: opacity 0.25s;
+  animation: pulse 0.5s infinite;
 }
 img.not-loaded {
   opacity: 0;
@@ -442,6 +452,43 @@ form.login-form {
 }
 form.login-form input {
   margin-bottom: 16px;
+}
+
+@keyframes spinner-dots {
+  0% {
+    box-shadow: -4vmax 2vmax 0 -1vmax currentColor, -2vmax 2vmax 0 0vmax currentColor, 0vmax 2vmax 0 0vmax currentColor, 2vmax 2vmax 0 0vmax currentColor;
+  }
+  100% {
+    box-shadow: -2vmax 2vmax 0 0vmax currentColor, 0vmax 2vmax 0 0vmax currentColor, 2vmax 2vmax 0 0vmax currentColor, 4vmax 2vmax 0 -1vmax currentColor;
+  }
+}
+.spinner {
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  z-index: 2;
+}
+.spinner ~ * {
+  filter: blur(0.1vmax);
+  opacity: 0.9;
+}
+.spinner::after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100%;
+  left: 50%;
+  top: 50%;
+  width: 1.5vmax;
+  height: 1.5vmax;
+  transform: translate(-50%, calc(-50% - 2vmax));
+  background: transparent;
+  animation: spinner-dots 1s linear infinite;
 }
 
 article.food-element {

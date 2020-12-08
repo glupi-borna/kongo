@@ -7,14 +7,26 @@ function hover_image(url) {
 	preview.className = "follow-mouse";
 
 	imgel.onmouseenter = () => {
+		fadein(preview);
 		document.body.append(preview);
 	};
 
 	imgel.onmouseleave = () => {
-		preview.remove();
+		fadeout(preview).then(()=>preview.remove());
 	};
 
 	return imgel;
+}
+
+
+function spinner(promise) {
+	let s = el("div", "spinner");
+	s.no_remove = true;
+	fadein(s);
+	promise.finally(() => {
+		fadeout(s).then(()=>s.remove());
+	});
+	return s;
 }
 
 
@@ -50,6 +62,8 @@ function static_element(data) {
 	if (type === "button") {
 		element = el("button", "", text(label));
 		element.onclick = (e) => { data.options.action(data.row); e.stopPropagation(); };
+	} else if (typeof(type) === "function") {
+		element = data.options.type(data);
 	} else if (value === null || value === undefined) {
 		element = el("div", "", text(String("?")));
 	} else {
@@ -227,8 +241,9 @@ function edit_element(data) {
 		rows?: number;
 		// Forces textarea field height.
 
-		type?: string;
+		type?: string | (data: ColumnOptions) => HTMLElement;
 		// Used to force a type specific type.
+		// Alternatively, a function that generates a HTMLElement can be passed for arbitrary display.
 
 		diff_transform?: (val) => any;
 		// Used to transform values after changes have been detected in diff.
@@ -316,7 +331,10 @@ function table(get_data, options) {
 	};
 
 	t.load_data = async () => {
-		let data_array = await get_data();
+		let data = get_data();
+		t.insertAdjacentElement("afterbegin", spinner(data));
+
+		let data_array = await data;
 
 		let headers_display = function_unwrap(options.headers_display || {});
 		let headers = function_unwrap(options.headers || Object.keys(headers_display));
@@ -491,6 +509,7 @@ function table_action(action) {
 window.Elements = {
 	table: table,
 	static_element: static_element,
-	edit_element: edit_element
+	edit_element: edit_element,
+	spinner: spinner
 }
 })();

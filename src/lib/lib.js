@@ -137,9 +137,14 @@ class Signal {
 	}
 }
 
-function navigate_to(path) {
+function navigate_to(path, new_tab=false) {
 	let app_root = location.href.split("/").slice(0,-1).join("/");
-	location = app_root + path;
+
+	if (new_tab) {
+		window.open(app_root + path, "_blank");
+	} else {
+		location = app_root + path;
+	}
 }
 
 function mouse_listen(delay=500, mouse_side_cls=false) {
@@ -257,9 +262,14 @@ function show(id, data, push_state=true) {
 
 	setTimeout(() => {
 		for (let child of target.parentElement.children) {
-			child.classList.toggle("fadeout", child!==target);
-			child.classList.toggle("fadein", child===target);
-			child.classList.toggle("display-none", child!==target);
+			if (child===target) {
+				child.classList.toggle("display-none", false);
+				fadein(child);
+			} else {
+				fadeout(child).then(() => {
+					child.classList.toggle("display-none", true);
+				});
+			}
 
 			let old = child.show_state;
 			let update = old != (child===target);
@@ -273,12 +283,11 @@ function show(id, data, push_state=true) {
 				}
 				child.classList.toggle("display-none", false);
 			} else {
-				setTimeout(() => {
-					if (update) {
+				if (update) {
+					setTimeout(() => {
 						child.dispatchEvent(new Event("hidden"));
-					}
-					child.classList.toggle("display-none", true);
-				});
+					});
+				}
 			}
 		}
 	});
@@ -295,6 +304,60 @@ function set_global(varname, on_off) {
 
 function get_global(varname) {
 	return Boolean(globals[varname]);
+}
+
+function fadein(element) {
+	let ft;
+
+	let prom = new Promise(resolve => {
+		element.classList.toggle("fadeout", false);
+		element.classList.toggle("fadein", true);
+
+		ft = setTimeout(() => {
+			element.classList.toggle("fadeout", false);
+			element.classList.toggle("fadein", false);
+			element.fade_resolve = null;
+			element.fade_timeout = null;
+			resolve();
+		}, 250);
+
+		if (element.fade_timeout) {
+			clearTimeout(element.fade_timeout);
+			element.fade_resolve();
+		}
+
+		element.fade_timeout = ft;
+		element.fade_resolve = resolve;
+	});
+
+	return prom;
+}
+
+function fadeout(element) {
+	let ft;
+
+	let prom = new Promise(resolve => {
+		element.classList.toggle("fadeout", true);
+		element.classList.toggle("fadein", false);
+
+		ft = setTimeout(() => {
+			element.classList.toggle("fadeout", false);
+			element.classList.toggle("fadein", false);
+			element.fade_resolve = null;
+			element.fade_timeout = null;
+			resolve();
+		}, 250);
+
+		if (element.fade_timeout) {
+			clearTimeout(element.fade_timeout);
+			element.fade_resolve();
+		}
+
+		element.fade_timeout = ft;
+		element.fade_resolve = resolve;
+	});
+
+	return prom;
 }
 
 function throttle(fn, ms = 100) {
@@ -344,8 +407,12 @@ function image(url) {
 }
 
 function remove_children(el) {
-	while(el.hasChildNodes()) {
-		el.firstChild.remove();
+	let children = [...el.childNodes];
+	for (let node of children) {
+		if (node.no_remove) {
+			continue;
+		}
+		node.remove();
 	}
 }
 

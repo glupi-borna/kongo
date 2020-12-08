@@ -27,10 +27,10 @@ async function login_submit(event) {
 		switch (error.status) {
 			case 401:
 			case 403:
-				b.setCustomValidity("Wrong username or password. Please try again.");
+				b.setCustomValidity("Pogrešno korisničko ime ili lozinka. Pokušajte ponovno.");
 				break;
 			default:
-				b.setCustomValidity("Error communicating with server.");
+				b.setCustomValidity("Greška u komunikaciji sa poslužiteljem..");
 				break;
 		}
 
@@ -58,7 +58,7 @@ function init_location_articles() {
 		itemDiscountPrice: "Promo cijena",
 		itemDescription: "Opis",
 		itemDeclaration: "Deklaracija",
-		itemUom: "Mjerna jedinica",
+		itemRefUom: "Mjerna jedinica",
 	};
 
 	location_articles.addEventListener("shown", async (e) => {
@@ -78,6 +78,9 @@ function init_location_articles() {
 		conf.column_options["itemOrder"] = { editable: true };
 		conf.column_options["assetUrl"] = { type: "image", url_prefix: api.root };
 		conf.column_options["visible"] = { type: "boolean", editable: true, diff_transform: Number };
+		conf.column_options["itemDiscount"] = { type: (data)=>text((data.value || 0) + " %") };
+		conf.column_options["itemPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
+		conf.column_options["itemDiscountPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
 
 		conf.actions = [];
 		conf.actions.push({
@@ -114,7 +117,7 @@ function init_location_articles() {
 			label: "Ekran",
 			position: "top-right",
 			action: (table) => {
-				navigate_to("?location=" + loc_id);
+				navigate_to("?location=" + loc_id, true);
 			}
 		});
 
@@ -143,7 +146,7 @@ function init_articles() {
 		itemDiscountPrice: "Promo cijena",
 		itemDescription: "Opis",
 		itemDeclaration: "Deklaracija",
-		itemUom: "Mjerna jedinica",
+		itemRefUom: "Mjerna jedinica",
 	};
 
 	articles.addEventListener("shown", async (e) => {
@@ -160,8 +163,11 @@ function init_articles() {
 		conf.column_options = {};
 		conf.column_options["itemOrder"] = { editable: true };
 		conf.column_options["itemDescription"] = { editable: true, expandable: true };
-		conf.column_options["itemDeclaration"] = { editable: true, expandable: true };
+		conf.column_options["itemDeclaration"] = { editable: false, expandable: true };
 		conf.column_options["assetUrl"] = { type: "image", url_prefix: api.root };
+		conf.column_options["itemDiscount"] = { type: (data)=>text((data.value || 0) + " %") };
+		conf.column_options["itemPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
+		conf.column_options["itemDiscountPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
 
 		conf.actions = [];
 
@@ -235,7 +241,7 @@ function init_locations() {
 		conf.column_options[""] = {
 			type: "button",
 			label: "Ekran",
-			action: (row) => navigate_to("?location=" + row.current_data.locationId)
+			action: (row) => navigate_to("?location=" + row.current_data.locationId, true)
 		};
 
 		conf.actions = [];
@@ -298,6 +304,7 @@ function init_login() {
 	login.addEventListener("hidden", () => {
 		login.reset();
 	});
+	// login.insertAdjacentElement("afterbegin", Elements.spinner(new Promise(()=>{})));
 }
 
 function if_role(roles, iftrue=true, iffalse=null) {

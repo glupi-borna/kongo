@@ -16,34 +16,34 @@
 	<script src="admin-screen.js"></script>
 </head>
 
-<body>
+<body nofadein>
 	<header class="smaller">
 		<img src="graphics/gastro-logo.svg"/>
-		<button class="logged-in" onclick="log_out()">LOGOUT</button>
+		<button class="logged-in" onclick="log_out()">ODJAVA</button>
 	</header>
 	<main>
-		<form id="login" class="login-form" onsubmit="login_submit(event)">
-			<input placeholder="Username" name="username" type="text" autocomplete="username" required/>
-			<input placeholder="Password" name="password" type="password" required/>
-			<button type="submit" onclick="reset_validity(this)">Log in</button>
+		<form id="login" class="display-none login-form" onsubmit="login_submit(event)">
+			<input placeholder="Korisničko ime" name="username" type="text" autocomplete="username" required/>
+			<input placeholder="Lozinka" name="password" type="password" required/>
+			<button type="submit" onclick="reset_validity(this)">Prijavi se</button>
 		</form>
 		<section id="mainscreen" class="full display-none">
 			<div class="card full flex-vertical">
 				<h1 id="title"
 					class="flex-static no-overflow"></h1>
-				<div class="flex-dynamic flex-vertical no-overflow">
+				<div class="flex-dynamic flex-vertical no-overflow" style="position: relative">
 					<div id="articles"
-						 class="flex-vertical flex-dynamic no-overflow">
+						 class="full flex-vertical flex-dynamic no-overflow">
 					</div>
 					<div id="location_articles"
-						 class="flex-vertical flex-dynamic no-overflow">
+						 class="full flex-vertical flex-dynamic no-overflow">
 					</div>
 					<div id="locations"
-						 class="flex-vertical flex-dynamic no-overflow">
+						 class="full flex-vertical flex-dynamic no-overflow">
 					</div>
 					<div id="admin-dash"
 						 style="align-items: center"
-						 class="flex-vertical flex-dynamic no-overflow">
+						 class="full flex-vertical flex-dynamic no-overflow">
 						<div class="flex-dynamic"></div>
 						<button onclick="show('locations')">PREGLED LOKACIJA</button>
 						<div class="flex-dynamic"></div>
