@@ -96,7 +96,7 @@ class Signal {
 				this.emit(val)
 
 		if (clear)
-			signal.clear();
+			this.clear();
 
 		this.finished = finish;
 	}
@@ -118,7 +118,7 @@ class Signal {
 			this.current_value = val
 			this.update_subs()
 		} else
-			throw new TypeError("Trying to emit wrong type from signal!")
+			throw new TypeError(`Trying to emit wrong type from signal!`)
 	}
 
 	clear() {
@@ -399,9 +399,12 @@ function text(str) {
 	return document.createTextNode(str);
 }
 
-function image(url) {
+function image(url, onload = ()=>null) {
 	let img = el("img", "not-loaded");
-	img.onload = () => img.classList.toggle("not-loaded", false);
+	img.onload = () => {
+		img.classList.toggle("not-loaded", false)
+		onload();
+	};
 	img.src = url;
 	return img;
 }
@@ -502,4 +505,67 @@ function bench(fn, repeats=100000) {
 	}
 
 	return performance.now() - t1;
+}
+
+
+const popover_stack = [];
+
+function current_popover() {
+	return popover_stack.slice(-1)[0] || null;
+}
+
+function popover() {
+	let current_popover_el = current_popover();
+
+	if (current_popover_el) {
+		current_popover_el.remove();
+	}
+
+	let popover = el("div", "popover");
+	popover.closed = new Signal();
+	popover.opened = new Signal();
+
+	popover.close = () => {
+		if (popover === current_popover()) {
+			popover.remove();
+			popover_stack.pop();
+		} else {
+			let popover_index = popover_stack.indexOf(popover);
+			if (popover_index >= 0) {
+				popover_stack.splice(popover_index, 1);
+			} else {
+				throw new Error("Can't close popover not in popover stack.");
+			}
+		}
+		popover.closed.emit();
+
+		let next_popover = current_popover();
+		if (next_popover) {
+			document.body.append(next_popover);
+		}
+	};
+
+	popover.open = () => {
+		let popover_index = popover_stack.indexOf(popover);
+		if (popover_index < 0) {
+			popover_stack.push(popover);
+			document.body.append(popover);
+			popover.opened.emit();
+		} else {
+			throw new Error("popover is already open!");
+		}
+	};
+
+	return popover;
+}
+
+function modal() {
+	let modal_wrapper = popover();
+	modal_wrapper.classList.add("modal");
+
+	modal_wrapper.addEventListener("click", () => {
+		modal_wrapper.close();
+	});
+
+	return modal_wrapper;
 }

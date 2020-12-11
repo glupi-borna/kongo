@@ -134,9 +134,285 @@ table tr.clickable:hover {
   background: rgba(60, 56, 53, 0.2);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1 {
   font-family: "DIN Pro", sans;
   text-transform: uppercase;
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: ALSSchlange, sans;
+  text-transform: uppercase;
+}
+
+.admin-screen h1 {
+  margin: 0;
+}
+.admin-screen h1 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h1 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h1 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h1 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h1 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h1 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h1 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 {
+  margin: 0;
+}
+.admin-screen h2 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h2 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h2 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 {
+  margin: 0;
+}
+.admin-screen h3 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h3 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h3 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 {
+  margin: 0;
+}
+.admin-screen h4 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h4 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h4 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 {
+  margin: 0;
+}
+.admin-screen h5 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h5 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h5 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 {
+  margin: 0;
+}
+.admin-screen h6 + h1 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h1.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 + h2 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h2.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 + h3 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h3.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 + h4 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h4.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 + h5 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h5.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
+}
+.admin-screen h6 + h6 {
+  margin-top: 0.67em;
+}
+.admin-screen h6 + h6.subtitle {
+  margin-top: 0;
+  font-size: 0.5;
 }
 
 html, body {
@@ -378,6 +654,29 @@ button {
   cursor: pointer;
   transition: opacity 0.1s;
 }
+button.action {
+  background: #087;
+  color: white;
+}
+button.action:hover, button.action:focus {
+  background: #00ad98;
+}
+button.action:active {
+  background: #007a6b;
+}
+button.warn {
+  background: #f55;
+  color: white;
+}
+button.warn:hover, button.warn:focus {
+  background: #ff6666;
+}
+button.warn:active {
+  background: #ff3333;
+}
+button.gap {
+  margin: 4px;
+}
 button.icon {
   background: transparent;
   color: #3c3835;
@@ -402,7 +701,11 @@ button:disabled, button.disabled {
   pointer-events: none;
 }
 
-input, textarea {
+.input-label {
+  margin-top: 0.5em;
+}
+
+input, textarea, select {
   background: white;
   color: #3c3835;
   border: 2px solid #3c3835;
@@ -411,12 +714,31 @@ input, textarea {
   font-size: 14px;
   resize: none;
 }
-input.changed, textarea.changed {
+input:focus, textarea:focus, select:focus {
+  border: 2px solid #087;
+}
+input.changed, textarea.changed, select.changed {
   background: #f8d3b7;
 }
 
+select {
+  appearance: none;
+  background-image: url("graphics/chevron.svg");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 0.5em) 50%;
+  background-size: 0.75em;
+  padding-right: 1.5em;
+}
+select.changed {
+  background: #f8d3b7;
+  background-image: url("graphics/chevron.svg");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 0.5em) 50%;
+  background-size: 0.75em;
+}
+
 input[type=checkbox] {
-  display: block;
+  display: inline-block;
   position: relative;
   appearance: none;
   background: white;
@@ -424,6 +746,9 @@ input[type=checkbox] {
   height: 16px !important;
   border: 2px solid #3c3835;
   cursor: pointer;
+}
+input[type=checkbox]:focus {
+  border: 2px solid #087;
 }
 input[type=checkbox].changed {
   background: #f8d3b7;
@@ -514,6 +839,11 @@ article.food-element h1 {
   font-weight: bold;
   text-transform: uppercase;
 }
+article.food-element h1.food-title {
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  font-size: calc(var(--height) * 0.0818181818);
+}
 article.food-element p {
   font: calc(var(--height) * 0.0327272727) ALSSchlange;
 }
@@ -594,12 +924,14 @@ article.food-element p.food-price::after {
 }
 .food-image img.not-loaded {
   background: white;
+  border-radius: 100%;
+  object-position: -1000vh;
   opacity: 1;
   z-index: 1;
   min-width: 100%;
   min-height: 100%;
 }
-.food-image::after {
+.food-image.not-loaded::after {
   content: "";
   position: absolute;
   display: block;
@@ -890,6 +1222,82 @@ div.scrollbar .scrollbar-nub {
   box-sizing: content-box;
   padding-top: 2px;
   transition: transform 0.1s, height 0.25s;
+}
+
+.middle-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.popover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 50;
+}
+.popover.modal {
+  background: rgba(60, 56, 53, 0.2);
+  width: 100vw;
+  height: 100vh;
+}
+.popover.modal > * {
+  max-height: 80vh;
+  max-width: 80vw;
+}
+
+.calorie .nutrition-subnutrients {
+  display: none;
+}
+
+fieldset {
+  all: unset;
+  border: none;
+  border-left: 2px solid #3c3835;
+  padding-left: 8px;
+  margin-left: 8px;
+  margin-top: 0.5em;
+  padding-bottom: 0.5em;
+  position: relative;
+  transition: border-color 0.25s;
+}
+fieldset:hover, fieldset:focus-within {
+  border-left: 2px solid #087;
+}
+fieldset + fieldset {
+  margin-top: 1em;
+}
+fieldset.new, fieldset.new legend {
+  background: #f8d3b7;
+}
+fieldset legend {
+  all: unset;
+  font-family: ALSSchlange;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-left: -12px;
+  position: sticky;
+  top: 0;
+  background: white;
+  width: calc(100% + 12px);
+  z-index: 10;
+}
+fieldset fieldset legend {
+  top: 1.15em;
+  z-index: 9;
+}
+fieldset fieldset fieldset legend {
+  top: 2.3em;
+  z-index: 8;
+}
+fieldset fieldset fieldset fieldset legend {
+  top: 3.45em;
+  z-index: 7;
+}
+
+*:focus {
+  outline: none;
 }
 
 /*# sourceMappingURL=style.css.map */

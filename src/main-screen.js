@@ -1,8 +1,9 @@
 window.onload = kongo;
 
 function food_element(food_item) {
-	const img = image(api.root + food_item.assetUrl);
-	const food_image = el("div", "food-image", img);
+	let food_image;
+	const img = image(api.root + food_item.assetUrl, () => food_image.classList.toggle("not-loaded", false));
+	food_image = el("div", "food-image not-loaded", img);
 	const food_title = el("h1", "food-title", text(food_item.itemName));
 	const food_description = el("p", "food-description", text(food_item.itemDescription || ""));
 
@@ -187,8 +188,6 @@ function scrollable(element) {
 	const container = el("div", "scroll-container");
 
 	container.update_scroll = () => {
-		const scrollbar_width = (container.offsetWidth - container.clientWidth);
-
 		if (!settings.show_scrollbar) {
 			bar.classList.add("invisible");
 			element.classList.remove("has-scrollbar");

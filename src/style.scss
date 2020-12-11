@@ -25,10 +25,13 @@
 }
 
 $primary: #3c3835;
+$complement: #087;
+$warn: #f55;
 
 $fontsize-0_72: sizeadapt(0.72);
 $fontsize-1_25: sizeadapt(1.25);
 $fontsize-1_3: sizeadapt(1.3);
+$fontsize-1_8: sizeadapt(1.8);
 $fontsize-5: sizeadapt(5);
 
 // Item stuff
@@ -213,9 +216,34 @@ table {
 	}
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1 {
 	font-family: "DIN Pro", sans;
 	text-transform: uppercase;
+}
+
+h2, h3, h4, h5, h6 {
+	font-family: ALSSchlange, sans;
+	text-transform: uppercase;
+}
+
+.admin-screen {
+	$headermax: 6;
+	@for $i from 1 through $headermax {
+		h#{$i} {
+			margin: 0;
+		}
+
+		@for $j from 1 through $headermax {
+			h#{$i} + h#{$j} {
+				margin-top: 0.67em;
+
+				&.subtitle {
+					margin-top: 0;
+					font-size: 0.5;
+				}
+			}
+		}
+	}
 }
 
 html, body {
@@ -483,6 +511,36 @@ button {
 	cursor: pointer;
 	transition: opacity 0.1s;
 
+	&.action {
+		background: $complement;
+		color: white;
+
+		&:hover, &:focus {
+			background: scale-color($complement, $lightness: 10%);
+		}
+
+		&:active {
+			background: scale-color($complement, $lightness: -10%);
+		}
+	}
+
+	&.warn {
+		background: $warn;
+		color: white;
+
+		&:hover, &:focus {
+			background: scale-color($warn, $lightness: 10%);
+		}
+
+		&:active {
+			background: scale-color($warn, $lightness: -10%);
+		}
+	}
+
+	&.gap {
+		margin: 4px;
+	}
+
 	&.icon {
 		background: transparent;
 		color: $primary;
@@ -514,7 +572,11 @@ button {
 	}
 }
 
-input, textarea {
+.input-label {
+	margin-top: 0.5em;
+}
+
+input, textarea, select {
 	background: white;
 	color: $primary;
 	border: 2px solid $primary;
@@ -523,13 +585,34 @@ input, textarea {
 	font-size: 14px;
 	resize: none;
 
+	&:focus {
+		border: 2px solid $complement;
+	}
+
 	&.changed {
 		background: scale-color($primary, $saturation: 80%, $lightness: 80%);
 	}
 }
 
+select {
+	appearance: none;
+	background-image: url('graphics/chevron.svg');
+	background-repeat: no-repeat;
+	background-position: calc(100% - 0.5em) 50%;
+	background-size: 0.75em;
+	padding-right: 1.5em;
+
+	&.changed {
+		background: scale-color($primary, $saturation: 80%, $lightness: 80%);
+		background-image: url('graphics/chevron.svg');
+		background-repeat: no-repeat;
+		background-position: calc(100% - 0.5em) 50%;
+		background-size: 0.75em;
+	}
+}
+
 input[type="checkbox"] {
-	display: block;
+	display: inline-block;
 	position: relative;
 	appearance: none;
 	background: white;
@@ -537,6 +620,10 @@ input[type="checkbox"] {
 	height: 16px !important;
 	border: 2px solid $primary;
 	cursor: pointer;
+
+	&:focus {
+		border: 2px solid $complement;
+	}
 
 	&.changed {
 		background: scale-color($primary, $saturation: 80%, $lightness: 80%);
@@ -639,6 +726,12 @@ article.food-element {
 		text-transform: uppercase;
 	}
 
+	h1.food-title {
+		margin-block-start: .5em;
+		margin-block-end: .5em;
+		font-size: $fontsize-1_8;
+	}
+
 	p { font: $fontsize-0_72 ALSSchlange; }
 
 	p.food-code, p.food-std, p.food-ref {
@@ -720,6 +813,8 @@ article.food-element {
 		img {
 			&.not-loaded {
 				background: white;
+				border-radius: 100%;
+				object-position: -1000vh;
 				opacity: 1;
 				z-index: 1;
 				min-width: 100%;
@@ -732,7 +827,7 @@ article.food-element {
 			z-index: 3;
 		}
 
-		&::after {
+		&.not-loaded::after {
 			@include loader;
 		}
 
@@ -1064,4 +1159,91 @@ div.scrollbar {
 		padding-top: 2px;
 		transition: transform 0.1s, height 0.25s;
 	}
+}
+
+.middle-center {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.popover {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 50;
+
+	&.modal {
+		background: transparentize($primary, 0.8);
+		width: 100vw;
+		height: 100vh;
+
+		> * {
+			max-height: 80vh;
+			max-width: 80vw;
+		}
+	}
+}
+
+.calorie .nutrition-subnutrients {
+	display: none;
+}
+
+fieldset {
+	all: unset;
+	border: none;
+	border-left: 2px solid $primary;
+	padding-left: 8px;
+	margin-left: 8px;
+	margin-top: 0.5em;
+	padding-bottom: 0.5em;
+	position: relative;
+	transition: border-color 0.25s;
+
+	&:hover, &:focus-within {
+		border-left: 2px solid $complement;
+	}
+
+	+fieldset {
+		margin-top: 1em;
+	}
+
+	&.new {
+		&, legend {
+			background: scale-color($primary, $saturation: 80%, $lightness: 80%);
+		}
+	}
+
+	legend {
+		all: unset;
+		font-family: ALSSchlange;
+		font-weight: bold;
+		font-size: 1.2em;
+		margin-left: -12px;
+		position: sticky;
+		top: 0;
+		background: white;
+		width: calc(100% + 12px);
+		z-index: 10;
+	}
+
+	fieldset legend {
+		top: 1.15em;
+			z-index: 9;
+	}
+
+	fieldset fieldset legend {
+		top: 2.3em;
+		z-index: 8;
+	}
+
+	fieldset fieldset fieldset legend {
+		top: 3.45em;
+		z-index: 7;
+	}
+}
+
+*:focus {
+    outline: none;
 }

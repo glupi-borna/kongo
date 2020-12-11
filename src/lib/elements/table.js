@@ -101,7 +101,7 @@ function static_element(data) {
 }
 
 function edit_element(data) {
-	const options = data.options;
+	const options = data.options || {};
 	const table = data.table;
 	const object = data.object;
 	const field = data.field;
@@ -118,10 +118,9 @@ function edit_element(data) {
 		element.rows = options.rows || 3;
 		element.cols = options.cols || 35;
 	} else {
-		element = el("input");
-
 		switch (type) {
 			case 'number':
+				element = el("input");
 				element.type = "number";
 				element.step = "any";
 				element.size = options.cols || 8;
@@ -129,26 +128,48 @@ function edit_element(data) {
 				val = Number(val);
 				break;
 			case 'boolean':
+				element = el("input");
 				element.type = "checkbox";
 				element.size = 1;
 				value_field = "checked";
 				val = Boolean(val);
 				break;
+			case 'select':
+				let element_options = [];
+
+				for (let option of (data.select_options || options.select_options || [])) {
+					if (typeof(option) !== "object") {
+						element_options.push(el("option", "", text(option)));
+					} else {
+						let option_element = el("option", "", text(option.label));
+						option_element.value = option.value;
+						element_options.push(option_element);
+					}
+				}
+
+				element = el("select", "", ...element_options);
+				break;
 			default:
+				element = el("input");
 				element.type = "text";
 				element.size = options.cols || 30;
 				val = String(val);
 				break;
 		}
 
-		element.style.setProperty("width", element.size + "ch");
+		element.style.setProperty("width", (element.size || 30) + "ch");
 	}
 
-	let container = el("div", "flex-horizontal flex-inline flex-middle flex-center fit-content");
+	element.placeholder = options.placeholder ?? options.header_display ?? "";
+
+	let container = options.container_element?.() || el(
+		options.container_type || "div",
+		options.container_class ?? "flex-horizontal flex-inline flex-middle flex-center fit-content");
 
 	container.data = data;
 	container.original_value = val;
 	container.original_field_value = object[field];
+	container.edit_element = element;
 	element[value_field] = val;
 
 	let reset_element = el("button", "icon", text("↺"));
@@ -165,7 +186,10 @@ function edit_element(data) {
 		let changed = element[value_field] !== container.original_value;
 		reset_element.disabled = !changed;
 		element.classList.toggle("changed", changed);
-		table.changed.emit();
+
+		if (table) {
+			table.changed.emit();
+		}
 	});
 
 	let size_element;
@@ -181,7 +205,11 @@ function edit_element(data) {
 
 	container.trigger_input = () => {element.dispatchEvent(new Event("input"))};
 	container.trigger_input();
-	container.append(size_element, element, reset_element);
+	container.append(
+		...(options.prefix_elements || []),
+		size_element, element, reset_element,
+		...(options.postfix_elements || [])
+	);
 
 	return container;
 }
