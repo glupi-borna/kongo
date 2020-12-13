@@ -41,14 +41,13 @@ api.patch = async function patch(route, body, headers) {
 	return response;
 }
 
-api.get = async function get(route, body, headers) {
+api.get = async function get(route, headers) {
 	let response = await fetch(route, {
-		method: "POST",
+		method: "GET",
 		headers: {
 			"Content-Type": "application/json;charset=utf-8",
 			...headers
-		},
-		body: JSON.stringify(body)
+		}
 	});
 
 	if (!response.ok) {
@@ -66,22 +65,20 @@ api.pagination = (page_no, page_size) => {
 };
 
 api.log_in = async function log_in(username, password) {
-	let response;
-	response = await api.get(api.url + "/checkUser", { username, password });
-
-	return await response.json();
+	let response = await api.post(api.url + "/checkUser", { username, password });
+	return response.json();
 }
 
 
 api.devices = {};
 
 api.devices.all = async function all() {
-	let response = await fetch(api.url + "/devices");
+	let response = await api.get(api.url + "/devices");
 	return await response.json();
 }
 
 api.devices.one = async function one(id) {
-	let response = await fetch(api.url + "/device/" + id);
+	let response = await api.get(api.url + "/device/" + id);
 	return await response.json();
 }
 
@@ -133,9 +130,7 @@ api.screenDetails.modify = async function modify(screenDetail) {
 api.items = {};
 
 api.items.all = async function all(page_no=0, page_size=20) {
-	let response = api.get(
-		api.url + "/items", undefined, api.pagination(page_no, page_size)
-		);
+	let response = await api.get(api.url + "/items",  api.pagination(page_no, page_size));
 	return await response.json();
 }
 

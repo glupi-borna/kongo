@@ -52,7 +52,8 @@ function food_element(food_item) {
 		el("h1", "food-declaration-title", text("Opis proizvoda")),
 		el("p", "food-declaration-text", text(food_item.itemDeclaration)));
 
-	const nutrition = JSON.parse(food_item.itemNutritionFacts);
+	console.log(food_item.itemNutritionFacts);
+	const nutrition = JSON.parse(food_item.itemNutritionFacts || `{"calories": [], "nutrients": []}`);
 
 	const row = (...els) => el("tr", "", ...els);
 	const td = (val, cls="") => el("td", cls, text(val));
