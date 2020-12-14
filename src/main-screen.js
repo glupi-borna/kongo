@@ -52,7 +52,6 @@ function food_element(food_item) {
 		el("h1", "food-declaration-title", text("Opis proizvoda")),
 		el("p", "food-declaration-text", text(food_item.itemDeclaration)));
 
-	console.log(food_item.itemNutritionFacts);
 	const nutrition = JSON.parse(food_item.itemNutritionFacts || `{"calories": [], "nutrients": []}`);
 
 	const row = (...els) => el("tr", "", ...els);
@@ -344,15 +343,19 @@ function make_interactive() {
 }
 
 async function kongo() {
-	mouse_listen();
+	mouse_listen(500, false, false);
 	const main = scrollable(document.querySelector("main"));
 	const params = get_url_search_params();
 
-	// for (let i = 0; i < 20; i++) {
-		// main.append(food_element(fake_item()));
-	// }
 	let count = 0;
-	for (let item of await api.screens.active(params.location || 1)) {
+
+	let location_id = params.location;
+
+	if (!location_id) {
+		location_id = (await api.locations.all())[0].locationId;
+	}
+
+	for (let item of await api.screens.active(location_id)) {
 		if (!item.visible) {
 			continue;
 		}

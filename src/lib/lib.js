@@ -147,7 +147,7 @@ function navigate_to(path, new_tab=false) {
 	}
 }
 
-function mouse_listen(delay=500, mouse_side_cls=false) {
+function mouse_listen(delay=500, mouse_side_cls=false, mouse_pos_cssvars=true) {
 	let last_update = performance.now();
 
 	const update_mouse = (ev) => {
@@ -162,7 +162,7 @@ function mouse_listen(delay=500, mouse_side_cls=false) {
 			document.body.classList.toggle("mouse-bottom", mouse.y >= window.innerHeight * 0.5);
 		}
 
-		if (performance.now() - last_update > delay) {
+		if (mouse_pos_cssvars && performance.now() - last_update > delay) {
 			document.body.style.setProperty("--mouse-x", mouse.x / window.innerWidth);
 			document.body.style.setProperty("--mouse-y", mouse.y / window.innerHeight);
 			last_update = performance.now();
