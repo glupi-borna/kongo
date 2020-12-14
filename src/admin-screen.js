@@ -186,7 +186,7 @@ function init_articles() {
 
 		conf.actions.push({
 			label: "Save",
-			position: "bottom-right",
+			position: "bottom-middle",
 			init: (table, action, button) => {
 				table.has_changes.subscribe((val) => {
 					button.classList.toggle("display-none", !val);
@@ -215,8 +215,39 @@ function init_articles() {
 			action: function() { show("admin-dash") }
 		}));
 
+		conf.actions.push({
+			label: "<",
+			position: "bottom-left",
+			init: function(table) {
+				if (table.page_no === undefined) {
+					table.page_no = 0;
+				}
+			},
+			update: function(table, action, button) {
+				button.classList.toggle(
+					"display-none", table.page_no===0);
+			},
+			action: function(table) {
+				table.page_no = Math.max(0, table.page_no - 1);
+				table.load_data(table.page_no);
+			}
+		});
+
+		conf.actions.push({
+			label: ">",
+			position: "bottom-right",
+			update: function(table, action, button) {
+				button.classList.toggle(
+					"display-none", table.current_data().length!==20);
+			},
+			action: function(table) {
+				table.page_no = table.page_no + 1;
+				table.load_data(table.page_no);
+			}
+		});
+
 		let data_table = Elements.table(
-			async () => await api.items.all(),
+			api.items.all,
 			conf
 		);
 

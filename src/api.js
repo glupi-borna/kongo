@@ -58,10 +58,9 @@ api.get = async function get(route, headers) {
 }
 
 api.pagination = (page_no, page_size) => {
-	return {
-		offset: page_no * page_size,
-		limit: page_size
-	};
+	let offset = page_no * page_size;
+	let limit = page_size;
+	return `?limit=${limit}&&offset=${offset}`;
 };
 
 api.log_in = async function log_in(username, password) {
@@ -130,7 +129,9 @@ api.screenDetails.modify = async function modify(screenDetail) {
 api.items = {};
 
 api.items.all = async function all(page_no=0, page_size=20) {
-	let response = await api.get(api.url + "/items",  api.pagination(page_no, page_size));
+	let response = await api.get(
+		api.url + "/items" + api.pagination(page_no, page_size)
+	);
 	return await response.json();
 }
 

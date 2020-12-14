@@ -150,9 +150,9 @@ function edit_element(data) {
 				element = el("select", "", ...element_options);
 				break;
 			default:
-				element = el("input");
-				element.type = "text";
-				element.size = options.cols || 30;
+				element = el("textarea");
+				element.rows = options.cols || 1;
+				element.cols = options.cols || 35;
 				val = String(val);
 				break;
 		}
@@ -358,8 +358,8 @@ function table(get_data, options) {
 		return data;
 	};
 
-	t.load_data = async () => {
-		let data = get_data();
+	t.load_data = async (...args) => {
+		let data = get_data(...args);
 		t.insertAdjacentElement("afterbegin", spinner(data));
 
 		let data_array = await data;
@@ -482,24 +482,38 @@ function table(get_data, options) {
 			a.table = t;
 		});
 
-		let top_left_table_actions = actions.filter(a => a.position === 'top-left').map(table_action);
-		let top_middle_table_actions = actions.filter(a => a.position === 'top-middle').map(table_action);
-		let top_right_table_actions = actions.filter(a => a.position === 'top-right').map(table_action);
+		let top_left_table_actions = actions.filter(
+			a => a.position === 'top-left').map(table_action);
+		let top_middle_table_actions = actions.filter(
+			a => a.position === 'top-middle').map(table_action);
+		let top_right_table_actions = actions.filter(
+			a => a.position === 'top-right').map(table_action);
 
-		let bottom_left_table_actions = actions.filter(a => a.position === 'bottom-left').map(table_action);
-		let bottom_middle_table_actions = actions.filter(a => a.position === 'bottom-middle').map(table_action);
-		let bottom_right_table_actions = actions.filter(a => a.position === 'bottom-right').map(table_action);
+		let bottom_left_table_actions = actions.filter(
+			a => a.position === 'bottom-left').map(table_action);
+		let bottom_middle_table_actions = actions.filter(
+			a => a.position === 'bottom-middle').map(table_action);
+		let bottom_right_table_actions = actions.filter(
+			a => a.position === 'bottom-right').map(table_action);
 
-		let top_left = el("div", "flex-horizontal flex-dynamic flex-start", ...top_left_table_actions);
-		let top_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...top_middle_table_actions);
-		let top_right = el("div", "flex-horizontal flex-dynamic flex-end", ...top_right_table_actions);
+		let top_left = el("div", "flex-horizontal flex-dynamic flex-start",
+			...top_left_table_actions);
+		let top_mid = el("div", "flex-horizontal flex-dynamic flex-center",
+			...top_middle_table_actions);
+		let top_right = el("div", "flex-horizontal flex-dynamic flex-end",
+			...top_right_table_actions);
 
-		let bottom_left = el("div", "flex-horizontal flex-dynamic flex-start", ...bottom_left_table_actions);
-		let bottom_mid = el("div", "flex-horizontal flex-dynamic flex-center", ...bottom_middle_table_actions);
-		let bottom_right = el("div", "flex-horizontal flex-dynamic flex-end", ...bottom_right_table_actions);
+		let bottom_left = el("div", "flex-horizontal flex-dynamic flex-start",
+			...bottom_left_table_actions);
+		let bottom_mid = el("div", "flex-horizontal flex-dynamic flex-center",
+			...bottom_middle_table_actions);
+		let bottom_right = el("div", "flex-horizontal flex-dynamic flex-end",
+			...bottom_right_table_actions);
 
-		let top = el("div", "flex-horizontal flex-static", top_left, top_mid, top_right);
-		let bottom = el("div", "flex-horizontal flex-static", bottom_left, bottom_mid, bottom_right);
+		let top = el("div", "flex-horizontal flex-static",
+			top_left, top_mid, top_right);
+		let bottom = el("div", "flex-horizontal flex-static",
+			bottom_left, bottom_mid, bottom_right);
 
 		if (t.top_actions) {
 			t.top_actions.remove();
@@ -516,6 +530,8 @@ function table(get_data, options) {
 
 		table_container.insertAdjacentElement("beforebegin", t.top_actions);
 		table_container.insertAdjacentElement("afterend", t.bottom_actions);
+
+		t.changed.emit();
 	};
 
 	t.load_data();
@@ -528,6 +544,10 @@ function table_action(action) {
 
 	if (action.init) {
 		action.init(action.table, action, button);
+	}
+
+	if (action.update) {
+		action.update(action.table, action, button);
 	}
 
 	button.onclick = () => action.action(action.table);
