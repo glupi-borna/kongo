@@ -80,6 +80,8 @@ function init_location_articles() {
 		conf.column_options["visible"] = { type: "boolean", editable: true, diff_transform: Number };
 		conf.column_options["itemDiscount"] = { type: (data)=>text((data.value || 0) + " %") };
 		conf.column_options["itemPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
+		conf.column_options["itemDescription"] = { expandable: true };
+		conf.column_options["itemDeclaration"] = { expandable: true };
 		conf.column_options["itemDiscountPrice"] = { type: (data)=>text((data.value || 0).toFixed(2) + " kn") };
 
 		conf.actions = [];

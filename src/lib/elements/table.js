@@ -74,7 +74,7 @@ function static_element(data) {
 			default:
 				let str = String(value);
 
-				if (str.length > 80) {
+				if (str.length > 80 || data.options.expandable) {
 					element = el("details", "",
 						el("summary", "", text(label)),
 						text(str)
