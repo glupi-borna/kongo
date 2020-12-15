@@ -123,7 +123,8 @@ function init_location_articles() {
 			}
 		});
 
-		conf.actions.push(...Elements.paginator());
+		// @TODO: Enable pagination when it's implemented on backend.
+		// conf.actions.push(...Elements.paginator());
 
 		let data_table = Elements.table(
 			async (page_no, page_size) => await api.screens.active(loc_id, page_no, page_size),
