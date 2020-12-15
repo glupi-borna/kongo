@@ -123,8 +123,10 @@ function init_location_articles() {
 			}
 		});
 
+		conf.actions.push(...Elements.paginator());
+
 		let data_table = Elements.table(
-			async () => await api.screens.active(loc_id),
+			async (page_no, page_size) => await api.screens.active(loc_id, page_no, page_size),
 			conf
 		);
 
@@ -215,36 +217,7 @@ function init_articles() {
 			action: function() { show("admin-dash") }
 		}));
 
-		conf.actions.push({
-			label: "<",
-			position: "bottom-left",
-			init: function(table) {
-				if (table.page_no === undefined) {
-					table.page_no = 0;
-				}
-			},
-			update: function(table, action, button) {
-				button.classList.toggle(
-					"display-none", table.page_no===0);
-			},
-			action: function(table) {
-				table.page_no = Math.max(0, table.page_no - 1);
-				table.load_data(table.page_no);
-			}
-		});
-
-		conf.actions.push({
-			label: ">",
-			position: "bottom-right",
-			update: function(table, action, button) {
-				button.classList.toggle(
-					"display-none", table.current_data().length!==20);
-			},
-			action: function(table) {
-				table.page_no = table.page_no + 1;
-				table.load_data(table.page_no);
-			}
-		});
+		conf.actions.push(...Elements.paginator());
 
 		let data_table = Elements.table(
 			api.items.all,

@@ -554,8 +554,41 @@ function table_action(action) {
 	return button;
 }
 
+function paginator() {
+	return [{
+		label: "<",
+		position: "bottom-left",
+		init: function(table) {
+			if (table.page_no === undefined) {
+				table.page_no = 0;
+			}
+		},
+		update: function(table, action, button) {
+			button.classList.toggle(
+				"display-none", table.page_no===0);
+		},
+		action: function(table) {
+			table.page_no = Math.max(0, table.page_no - 1);
+			table.load_data(table.page_no);
+		}
+	},
+	{
+		label: ">",
+		position: "bottom-right",
+		update: function(table, action, button) {
+			button.classList.toggle(
+				"display-none", table.current_data().length!==20);
+		},
+		action: function(table) {
+			table.page_no = table.page_no + 1;
+			table.load_data(table.page_no);
+		}
+	}];
+}
+
 window.Elements = {
 	table: table,
+	paginator: paginator,
 	static_element: static_element,
 	edit_element: edit_element,
 	spinner: spinner

@@ -112,8 +112,8 @@ api.screens.one = async function one(id) {
 	return await response.json();
 }
 
-api.screens.active = async function active(location_id) {
-	let response = await fetch(api.url + "/activeScreen/" + location_id);
+api.screens.active = async function active(location_id, page_no=0, page_size=20) {
+	let response = await fetch(api.url + "/activeScreen/" + location_id + api.pagination(page_no, page_size));
 	return await response.json();
 }
 
