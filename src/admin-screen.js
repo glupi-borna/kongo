@@ -489,7 +489,7 @@ function nutrition_fact(fact, is_calorie, is_subnutrient=false) {
 		"nutrition-fact flex-vertical " +
 			(is_subnutrient ? "subnutrient" : "nutrient") +
 			(is_calorie ? " calorie" : ""),
-		legend, name, uom, values, side, calorie, subnutrients_el, subnutrient_add);
+		legend, /**name,*/ uom, values, /**side, calorie,*/ subnutrients_el, subnutrient_add);
 	fact_el.deleted = new Signal();
 	fact_el.style.setProperty("align-items", "flex-start");
 	fact_el.fact_object = fact;
@@ -514,7 +514,7 @@ function nutrition_modal(item) {
 	let add_fact = el("button", "gap", text("Dodaj nutrijent"));
 	add_fact.onclick = () => {
 		let fact = {
-			name: "",
+			name: "Energija",
 			side: "right",
 			uom: "",
 			daily_value: 0,

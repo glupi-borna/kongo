@@ -2,7 +2,10 @@ window.onload = kongo;
 
 function food_element(food_item) {
 	let food_image;
-	const img = image(api.root + food_item.assetUrl, () => food_image.classList.toggle("not-loaded", false));
+	const img = image(api.root + food_item.assetUrl, (img) => {
+		food_image.classList.toggle("not-loaded", false);
+		img.animate([{opacity: 0}, {opacity: 1}], { duration: 250 });
+	});
 	food_image = el("div", "food-image not-loaded", img);
 	const food_title = el("h1", "food-title", text(food_item.itemName));
 	const food_description = el("p", "food-description", text(food_item.itemDescription || ""));
@@ -321,6 +324,8 @@ window.settings = {
 	show_scrollbar: false,
 	allow_expand: true,
 
+	refresh_minutes: 20,
+
 	// When the panel is touched, it becomes interactive for
 	// an amount of seconds, and the rotation options are ignored,
 	// to allow the user to browse.
@@ -360,7 +365,8 @@ async function kongo() {
 			continue;
 		}
 
-		main.append(food_element(item));
+		let elem = food_element(item);
+		main.append(elem);
 		count++;
 	}
 
@@ -416,4 +422,19 @@ async function kongo() {
 		setTimeout(rotate, 30);
 	};
 	rotate();
+
+	if (settings.refresh_minutes) {
+		setTimeout(try_refresh, settings.refresh_minutes * 1000 * 60)
+	}
+}
+
+function try_refresh() {
+	if (settings.interactive) {
+		setTimeout(try_refresh, settings.interactive_seconds / 2);
+	} else {
+		fadeout(document.body).then(() => {
+			document.body.classList.add("display-none");
+			location.reload();
+		});
+	}
 }

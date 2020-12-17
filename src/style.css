@@ -924,7 +924,6 @@ article.food-element p.food-price::after {
   z-index: 3;
 }
 .food-image img.not-loaded {
-  background: white;
   border-radius: 100%;
   object-position: -1000vh;
   opacity: 1;
@@ -944,6 +943,9 @@ article.food-element p.food-price::after {
   background: rgba(158, 156, 154, 0.5);
   animation: load 2s infinite;
   z-index: 2;
+}
+.food-image.not-loaded::before {
+  opacity: 0;
 }
 .food-image::before {
   /* Shadow */
@@ -968,6 +970,8 @@ article.food-element p.food-price::after {
   background: linear-gradient(rgba(60, 56, 53, 0.1), transparent);
   transform-origin: top;
   transform: rotate(45deg);
+  opacity: 1;
+  transition: opacity 0.25s;
 }
 article.food-element:nth-child(2n+1) .food-image {
   right: 0;

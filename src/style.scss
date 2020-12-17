@@ -813,7 +813,6 @@ article.food-element {
 
 		img {
 			&.not-loaded {
-				background: white;
 				border-radius: 100%;
 				object-position: -1000vh;
 				opacity: 1;
@@ -830,6 +829,10 @@ article.food-element {
 
 		&.not-loaded::after {
 			@include loader;
+		}
+
+		&.not-loaded::before {
+			opacity: 0;
 		}
 
 		&::before {
@@ -855,6 +858,8 @@ article.food-element {
 			background: linear-gradient(transparentize($primary, 0.9), transparent);
 			transform-origin: top;
 			transform: rotate(45deg);
+			opacity: 1;
+			transition: opacity 0.25s;
 		}
 
 		article.food-element:nth-child(2n+#{$bias}) & {

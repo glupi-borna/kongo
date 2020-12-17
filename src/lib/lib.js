@@ -4,6 +4,10 @@ Element.prototype.append = function append(...children) {
 	original_append.bind(this)(...children);
 }
 
+window.addEventListener('unload', function () {
+	// This helps with memory leaks in browsers.
+    document.documentElement.innerHTML = '';
+});
 window.mouse = { x: 0, y: 0, left: false };
 window.onpopstate = () => {
 	show(...history.state, false);
@@ -399,11 +403,11 @@ function text(str) {
 	return document.createTextNode(str);
 }
 
-function image(url, onload = ()=>null) {
+function image(url, onload = (image)=>null) {
 	let img = el("img", "not-loaded");
 	img.onload = () => {
-		img.classList.toggle("not-loaded", false)
-		onload();
+		img.classList.toggle("not-loaded", false);
+		onload(img);
 	};
 	img.src = url;
 	return img;
