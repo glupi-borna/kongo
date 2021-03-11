@@ -1,10 +1,24 @@
-window.onload = kongo;
+
+
+window.onerror = function onerror(msg, url, ln, col, err) {
+	api.report_error(err);
+};
+window.onunhandledrejection = function onunhandledrejection(msg, url, ln, col, err) {
+	api.report_error(err);
+};
+window.onload = with_error_handling(kongo, api.report_error, "stop");
 
 function food_element(food_item) {
+	window.info.screen_detail_id = food_item.screenDetailId;
+
 	let food_image;
 	const img = image(api.root + food_item.assetUrl, (img) => {
+		window.info.screen_detail_id = food_item.screenDetailId;
+
 		food_image.classList.toggle("not-loaded", false);
 		img.animate([{opacity: 0}, {opacity: 1}], { duration: 250 });
+
+		delete window.info.screen_detail_id;
 	});
 	food_image = el("div", "food-image not-loaded", img);
 	const food_title = el("h1", "food-title", text(food_item.itemName));
@@ -164,6 +178,7 @@ function food_element(food_item) {
 		food_image, food_details);
 
 	food_el.addEventListener("click", () => {
+		window.info.screen_detail_id = food_item.screenDetailId;
 		if (!settings.allow_expand) {
 			return;
 		}
@@ -173,10 +188,18 @@ function food_element(food_item) {
 		make_interactive();
 
 		setTimeout(() => {
+			window.info.screen_detail_id = food_item.screenDetailId;
+
 			food_el.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
 			food_el.dispatchEvent(new Event("scrollresize", {bubbles: true}));
+
+			delete window.info.screen_detail_id;
 		}, 200);
+
+		delete window.info.screen_detail_id;
 	});
+
+	delete window.info.screen_detail_id;
 
 	return food_el;
 }
@@ -360,7 +383,10 @@ async function kongo() {
 		location_id = (await api.locations.all())[0].locationId;
 	}
 
+	window.info.location_id = location_id;
+
 	for (let item of await api.screens.active(location_id)) {
+		window.info.screen_id = item.screenId;
 		if (!item.visible) {
 			continue;
 		}
@@ -438,3 +464,4 @@ function try_refresh() {
 		});
 	}
 }
+

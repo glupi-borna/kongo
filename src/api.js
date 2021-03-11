@@ -69,6 +69,14 @@ api.log_in = async function log_in(username, password) {
 }
 
 
+api.report_error = async function report_error(error) {
+	let response = await api.post(api.url + "/log", {
+		"createdBy": "kongo frontend",
+		"text": `${error.toString()}\nContext info:\n${info_string()}\nStack trace:\n${error.stack}`
+	});
+}
+
+
 api.devices = {};
 
 api.devices.all = async function all() {

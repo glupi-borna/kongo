@@ -12,6 +12,50 @@ window.mouse = { x: 0, y: 0, left: false };
 window.onpopstate = () => {
 	show(...history.state, false);
 };
+window.info = {};
+
+function info_string() {
+	let str = "";
+	for (let key in window.info) {
+		str += `${key}: <${window.info[key]}>; `;
+	}
+	return str;
+}
+
+/**
+	Returns a function wrapped with an on_error callback.
+	Whenever the function throws, the callback is triggered.
+	Also accepts an optional argument (restart_mode) that
+	can be "stop", "continue", or "reload".
+	"stop" - the wrapped function will not be restarted on error.
+	"continue" - the wrapped function will be restarted on error.
+	"reload" - the page will be refreshed on error.
+
+	By default, restart_mode is set to "continue".
+*/
+function with_error_handling(fn, on_error, restart_mode="continue") {
+	let out_fn;
+
+	out_fn = async () => {
+		try {
+			let res = fn();
+
+			if (res instanceof Promise) {
+				res = await res;
+			}
+		} catch (err) {
+			on_error(err);
+
+			if (restart_mode === "continue") {
+				out_fn();
+			} else if (restart_mode === "reload") {
+				window.location.reload();
+			}
+		}
+	};
+
+	return out_fn;
+}
 
 class Signal {
 	static UNSUB = Symbol("Signal.Unsub")
