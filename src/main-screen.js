@@ -396,6 +396,10 @@ async function kongo() {
 		count++;
 	}
 
+	if (count == 0) {
+		throw new Error("Screen has no items.");
+	}
+
 	if (settings.rotate_index === 'random') {
 		settings.rotate_index = Math.floor(Math.random() * count);
 	}
@@ -404,7 +408,7 @@ async function kongo() {
 	try {
 		elements[settings.rotate_index].scrollIntoView({block: "center", inline: "center"});
 	} catch (err) {
-		// api.report_error(err);
+		api.report_error(err);
 	}
 
 	main.update_scroll();
