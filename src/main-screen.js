@@ -401,7 +401,11 @@ async function kongo() {
 	}
 
 	let elements = Array.from(document.querySelectorAll("main article"));
-	elements[settings.rotate_index].scrollIntoView({block: "center", inline: "center"});
+	try {
+		elements[settings.rotate_index].scrollIntoView({block: "center", inline: "center"});
+	} catch (err) {
+		// api.report_error(err);
+	}
 
 	main.update_scroll();
 
