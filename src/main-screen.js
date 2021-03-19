@@ -1,12 +1,21 @@
-
-
 window.onerror = function onerror(msg, url, ln, col, err) {
 	api.report_error(err);
+	setTimeout(() => {
+		window.location.reload();
+	}, 30000);
 };
 window.onunhandledrejection = function onunhandledrejection(msg, url, ln, col, err) {
 	api.report_error(err);
+	setTimeout(() => {
+		window.location.reload();
+	}, 30000);
 };
-window.onload = with_error_handling(kongo, api.report_error, "stop");
+window.onload = with_error_handling(kongo, (err) => {
+	api.report_error(err);
+	setTimeout(() => {
+		window.location.reload();
+	}, 30000);
+}, "stop");
 
 function food_element(food_item) {
 	window.info.screen_detail_id = food_item.screenDetailId;
